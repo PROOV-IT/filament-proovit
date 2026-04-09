@@ -134,6 +134,7 @@ return [
         'actions' => [
             'create' => 'Create proof',
             'refresh' => 'Refresh',
+            'export' => 'Export selected',
             'view' => 'View',
             'open_certificate' => 'Open certificate',
             'revoke' => 'Revoke',
@@ -141,6 +142,20 @@ return [
         'notifications' => [
             'revoked_title' => 'Proof revoked',
             'revoked_body' => 'The selected proof has been revoked in ProovIT.',
+            'exported_title' => 'Proofs exported',
+            'exported_body' => 'The selected proofs have been packaged into a ZIP archive.',
+            'export_failed_title' => 'Proof export failed',
+        ],
+        'export' => [
+            'errors' => [
+                'zip_extension_required' => 'The PHP zip extension is required to export proofs.',
+                'no_proofs_selected' => 'No proofs were selected for export.',
+                'unable_create_directory' => 'Unable to create the ProovIT export directory.',
+                'unable_create_archive' => 'Unable to create the export archive.',
+                'unable_create_csv' => 'Unable to create the CSV export.',
+                'unable_finalize_csv' => 'Unable to finalize the CSV export.',
+                'invalid_file_url' => 'Invalid file URL: :url',
+            ],
         ],
         'columns' => [
             'name' => 'Name',
@@ -187,6 +202,18 @@ return [
             'files_required' => 'Required files: :files',
             'signature' => 'Signature',
             'signature_description' => 'Only shown when the selected template requires a signature.',
+        ],
+        'steps' => [
+            'proof' => 'Proof',
+            'proof_description' => 'Choose a template and define the proof identity.',
+            'metadata' => 'Metadata',
+            'metadata_description' => 'Recipients, tags and location details.',
+            'custom_fields' => 'Template fields',
+            'custom_fields_description' => 'Fields generated from the selected template.',
+            'files' => 'Files',
+            'files_description' => 'Upload the source files required by the template.',
+            'signature' => 'Signature',
+            'signature_description' => 'Provide a base64 signature when the template requires one.',
         ],
         'fields' => [
             'name' => 'Name',

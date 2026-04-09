@@ -7,6 +7,7 @@ The `ProovIT` plugin ships with a native Filament page dedicated to proofs.
 - recent proofs fetched from the connected ProovIT workspace
 - proof status, signed timestamp, description, and certificate link
 - a header action to create a new proof with the native deposit modal
+- a bulk export action to download selected proofs as a ZIP archive
 - a detail action that opens a dedicated proof view page
 - quick actions to open a certificate or revoke a proof when allowed by your workflow
 

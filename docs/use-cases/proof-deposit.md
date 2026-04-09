@@ -1,7 +1,7 @@
 # Proof deposit
 
 The plugin ships with a native proof deposit widget on the dashboard and a matching create action on the proofs page.
-Both open the same Filament action modal and build the payload through the shared `proovit/laravel-proovit` proof builder.
+Both open the same Filament wizard modal and build the payload through the shared `proovit/laravel-proovit` proof builder.
 
 ## What it does
 
@@ -13,6 +13,7 @@ Both open the same Filament action modal and build the payload through the share
 - reserves a token automatically before the proof initialization request
 - submits the proof initialization request through the SDK
 - uploads files and optional signature payloads after initialization
+- can be reused from any Filament page by calling `DepositProofAction::make()`
 
 ## Template-driven form
 

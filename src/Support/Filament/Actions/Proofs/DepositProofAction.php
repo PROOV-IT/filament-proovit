@@ -26,7 +26,7 @@ final class DepositProofAction
             ->label(__('filament-proovit::filament-proovit.proof_deposit.actions.deposit'))
             ->icon('heroicon-o-cloud-arrow-up')
             ->color('primary')
-            ->schema(ProofDepositActionSchema::schema())
+            ->steps(ProofDepositActionSchema::steps())
             ->modalWidth('7xl')
             ->action(function (array $data, mixed $livewire): void {
                 try {

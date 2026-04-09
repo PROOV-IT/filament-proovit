@@ -31,7 +31,10 @@ composer require proovit/filament-proovit
 - [Use cases](docs/use-cases/)
 - [Settings page](docs/use-cases/settings-page.md)
 - [Proof deposit](docs/use-cases/proof-deposit.md)
+- [Reusable actions](docs/use-cases/actions.md)
+- [Proof export](docs/use-cases/proof-export.md)
 - [Proofs page](docs/use-cases/proofs-page.md)
+- [Proof detail page](docs/use-cases/proof-view-page.md)
 - [Release notes](docs/release-notes.md)
 - [V1 scope](docs/use-cases/v1-scope.md)
 

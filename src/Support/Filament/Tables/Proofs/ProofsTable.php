@@ -9,6 +9,7 @@ use Filament\Notifications\Notification;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
+use Proovit\FilamentProovit\Support\Filament\Actions\Proofs\ExportProofsAction;
 
 final class ProofsTable
 {
@@ -72,6 +73,9 @@ final class ProofsTable
                             ->success()
                             ->send();
                     }),
+            ])
+            ->bulkActions([
+                ExportProofsAction::make(),
             ])
             ->emptyStateHeading(__('filament-proovit::filament-proovit.proofs.empty.heading'))
             ->emptyStateDescription(__('filament-proovit::filament-proovit.proofs.empty.description'))

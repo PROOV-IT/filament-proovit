@@ -3,6 +3,8 @@
 - [Dashboard](dashboard.md)
 - [Settings page](settings-page.md)
 - [Proof deposit](proof-deposit.md)
+- [Reusable actions](actions.md)
+- [Proof export](proof-export.md)
 - [Proofs page](proofs-page.md)
 - [Certificates page](certificates-page.md)
 - [Proof detail page](proof-view-page.md)

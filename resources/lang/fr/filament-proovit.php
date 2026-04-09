@@ -73,6 +73,7 @@ return [
         'actions' => [
             'create' => 'Créer une preuve',
             'refresh' => 'Rafraîchir',
+            'export' => 'Exporter la sélection',
             'view' => 'Voir',
             'open_certificate' => 'Ouvrir le certificat',
             'revoke' => 'Révoquer',
@@ -80,6 +81,20 @@ return [
         'notifications' => [
             'revoked_title' => 'Preuve révoquée',
             'revoked_body' => 'La preuve sélectionnée a été révoquée dans ProovIT.',
+            'exported_title' => 'Preuves exportées',
+            'exported_body' => 'Les preuves sélectionnées ont été regroupées dans une archive ZIP.',
+            'export_failed_title' => 'Export des preuves échoué',
+        ],
+        'export' => [
+            'errors' => [
+                'zip_extension_required' => 'L’extension PHP zip est requise pour exporter les preuves.',
+                'no_proofs_selected' => 'Aucune preuve n’a été sélectionnée pour l’export.',
+                'unable_create_directory' => 'Impossible de créer le répertoire d’export ProovIT.',
+                'unable_create_archive' => 'Impossible de créer l’archive d’export.',
+                'unable_create_csv' => 'Impossible de créer l’export CSV.',
+                'unable_finalize_csv' => 'Impossible de finaliser l’export CSV.',
+                'invalid_file_url' => 'URL de fichier invalide : :url',
+            ],
         ],
         'columns' => [
             'name' => 'Nom',
@@ -126,6 +141,18 @@ return [
             'files_required' => 'Fichiers requis : :files',
             'signature' => 'Signature',
             'signature_description' => 'Visible uniquement lorsque le modèle sélectionné exige une signature.',
+        ],
+        'steps' => [
+            'proof' => 'Preuve',
+            'proof_description' => 'Choisis un modèle et définis l’identité de la preuve.',
+            'metadata' => 'Métadonnées',
+            'metadata_description' => 'Destinataires, tags et localisation.',
+            'custom_fields' => 'Champs du modèle',
+            'custom_fields_description' => 'Champs générés à partir du modèle sélectionné.',
+            'files' => 'Fichiers',
+            'files_description' => 'Envoie les fichiers source requis par le modèle.',
+            'signature' => 'Signature',
+            'signature_description' => 'Renseigne une signature base64 lorsque le modèle l’exige.',
         ],
         'fields' => [
             'name' => 'Nom',

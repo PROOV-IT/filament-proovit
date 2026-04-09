@@ -14,9 +14,9 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Component;
-use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
+use Filament\Schemas\Components\Wizard\Step;
 use Proovit\FilamentProovit\Support\ProovitCategoryCatalog;
 use Proovit\FilamentProovit\Support\ProovitFolderCatalog;
 use Proovit\FilamentProovit\Support\ProovitProofTemplateCatalog;
@@ -28,12 +28,11 @@ final class ProofDepositActionSchema
     /**
      * @return array<int, Component>
      */
-    public static function schema(): array
+    public static function steps(): array
     {
         return [
-            Section::make(__('filament-proovit::filament-proovit.proof_deposit.sections.proof'))
-                ->description(__('filament-proovit::filament-proovit.proof_deposit.sections.proof_description'))
-                ->columns(2)
+            Step::make(__('filament-proovit::filament-proovit.proof_deposit.steps.proof'))
+                ->description(__('filament-proovit::filament-proovit.proof_deposit.steps.proof_description'))
                 ->schema([
                     Select::make('proof_template_id')
                         ->label(__('filament-proovit::filament-proovit.proof_deposit.fields.proof_template_id'))
@@ -75,9 +74,8 @@ final class ProofDepositActionSchema
                         ->columnSpanFull()
                         ->visible(static fn (Get $get): bool => self::template($get) !== null),
                 ]),
-            Section::make(__('filament-proovit::filament-proovit.proof_deposit.sections.metadata'))
+            Step::make(__('filament-proovit::filament-proovit.proof_deposit.steps.metadata'))
                 ->description(__('filament-proovit::filament-proovit.proof_deposit.sections.metadata_description'))
-                ->columns(2)
                 ->schema([
                     TagsInput::make('share_emails')
                         ->label(__('filament-proovit::filament-proovit.proof_deposit.fields.share_emails'))
@@ -104,9 +102,8 @@ final class ProofDepositActionSchema
                         ->numeric()
                         ->step('0.000001'),
                 ]),
-            Section::make(__('filament-proovit::filament-proovit.proof_deposit.sections.custom_fields'))
+            Step::make(__('filament-proovit::filament-proovit.proof_deposit.steps.custom_fields'))
                 ->description(__('filament-proovit::filament-proovit.proof_deposit.sections.custom_fields_description'))
-                ->columns(2)
                 ->schema(static function (Get $get): array {
                     $template = self::template($get);
 
@@ -126,9 +123,8 @@ final class ProofDepositActionSchema
                     );
                 })
                 ->visible(static fn (Get $get): bool => self::template($get)?->customFields() !== []),
-            Section::make(__('filament-proovit::filament-proovit.proof_deposit.sections.files'))
+            Step::make(__('filament-proovit::filament-proovit.proof_deposit.steps.files'))
                 ->description(static fn (Get $get): string => self::filesDescription($get))
-                ->columns(1)
                 ->schema([
                     FileUpload::make('files')
                         ->label(__('filament-proovit::filament-proovit.proof_deposit.fields.files'))
@@ -139,9 +135,8 @@ final class ProofDepositActionSchema
                         ->visibility('private')
                         ->columnSpanFull(),
                 ]),
-            Section::make(__('filament-proovit::filament-proovit.proof_deposit.sections.signature'))
+            Step::make(__('filament-proovit::filament-proovit.proof_deposit.steps.signature'))
                 ->description(__('filament-proovit::filament-proovit.proof_deposit.sections.signature_description'))
-                ->columns(1)
                 ->schema([
                     Textarea::make('signature_base64')
                         ->label(__('filament-proovit::filament-proovit.proof_deposit.fields.signature_base64'))
@@ -152,6 +147,14 @@ final class ProofDepositActionSchema
                 ])
                 ->visible(static fn (Get $get): bool => self::template($get)?->requiresSignature() ?? false),
         ];
+    }
+
+    /**
+     * @return array<int, Component>
+     */
+    public static function schema(): array
+    {
+        return self::steps();
     }
 
     private static function template(Get $get): ?ProofTemplateData

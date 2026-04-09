@@ -106,7 +106,7 @@ final class ProovitCertificates extends Page implements HasTable
                     'status' => (string) ($proof['status'] ?? 'unknown'),
                     'description' => (string) ($proof['description'] ?? ''),
                     'signed_at' => (string) ($proof['signed_at'] ?? ''),
-                    'certificate_url' => $proof['certificate_url'] ?? null,
+                    'certificate_url' => $proof['certificate_url'] ?? ($proof['links']['certificate_pdf'] ?? null),
                 ];
             },
             $rows,

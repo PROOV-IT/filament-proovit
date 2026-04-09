@@ -94,6 +94,54 @@ return [
         ],
     ],
 
+    'proof_deposit' => [
+        'heading' => 'Créer une preuve',
+        'actions' => [
+            'deposit' => 'Créer une preuve',
+        ],
+        'notifications' => [
+            'created_title' => 'Preuve créée',
+            'created_body' => 'La preuve a été initialisée et ses fichiers ont été envoyés.',
+            'failed_title' => 'Création de la preuve échouée',
+        ],
+        'sections' => [
+            'proof' => 'Preuve',
+            'proof_description' => 'Renseigne l’identité de la preuve et les identifiants du modèle ProovIT.',
+            'metadata' => 'Métadonnées',
+            'metadata_description' => 'Destinataires, mots-clés, localisation et champs personnalisés optionnels.',
+            'files' => 'Fichiers et signature',
+            'files_description' => 'Envoie les fichiers source et renseigne éventuellement une signature base64.',
+        ],
+        'fields' => [
+            'name' => 'Nom',
+            'description' => 'Description',
+            'folder_id' => 'UUID du dossier',
+            'category_id' => 'UUID de la catégorie',
+            'token_reservation_id' => 'UUID de réservation de jeton',
+            'proof_template_id' => 'UUID du modèle de preuve',
+            'share_emails' => 'Emails de partage',
+            'keywords' => 'Mots-clés',
+            'is_anonymous' => 'Anonyme',
+            'location' => 'Localisation',
+            'lat' => 'Latitude',
+            'lng' => 'Longitude',
+            'custom_fields' => 'Champs personnalisés',
+            'files' => 'Fichiers',
+            'signature_base64' => 'Signature base64',
+        ],
+        'helpers' => [
+            'signature_base64' => 'Optionnel. Laisse vide lorsque le modèle de preuve sélectionné ne nécessite pas de signature.',
+        ],
+        'placeholders' => [
+            'share_emails' => 'Ajouter des adresses email de destinataires',
+            'keywords' => 'Ajouter des mots-clés',
+        ],
+        'empty' => [
+            'heading' => 'Aucun brouillon de preuve créé',
+            'description' => 'Utilise le bouton ci-dessus pour ouvrir la fenêtre de création de preuve et initialiser une nouvelle preuve.',
+        ],
+    ],
+
     'certificates' => [
         'title' => 'Certificats ProovIT',
         'navigation' => 'Certificats',
@@ -149,6 +197,7 @@ return [
             'body' => 'Choisis l’endpoint API, saisis tes identifiants, teste la connexion, puis sélectionne la société à rattacher à ce panel.',
         ],
         'actions' => [
+            'create_account' => 'Créer un compte',
             'save' => 'Enregistrer',
             'test_connection' => 'Tester la connexion',
         ],

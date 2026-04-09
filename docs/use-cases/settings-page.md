@@ -10,6 +10,7 @@ The ProovIT Filament plugin ships with a dedicated configuration page.
 - load the list of companies returned by ProovIT
 - select the company UUID that will be used for subsequent requests
 - persist the connection data in the encrypted settings store
+- open the public account creation page directly from the panel
 
 ## What it edits
 
@@ -20,6 +21,7 @@ The ProovIT Filament plugin ships with a dedicated configuration page.
 - selected company UUID
 - selected company display name
 - company list returned by the API
+- public account creation URL used by the action button
 
 ## Connection flow
 
@@ -48,6 +50,15 @@ It reads the current form state, then the plugin:
 3. test the connection
 4. select the company UUID
 5. save the settings
+
+## Account creation shortcut
+
+The page also exposes a `Create account` action.
+
+- on the `dev` branch, it opens the staging sign-up page
+- on the `main` branch, it opens the production sign-up page
+
+This keeps the onboarding path aligned with the current release channel without requiring the user to copy any URL manually.
 
 ## Notes
 

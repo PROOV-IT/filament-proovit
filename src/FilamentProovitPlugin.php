@@ -11,6 +11,7 @@ use Proovit\FilamentProovit\Pages\ProovitProofs;
 use Proovit\FilamentProovit\Pages\ProovitProofView;
 use Proovit\FilamentProovit\Pages\ProovitSettings;
 use Proovit\FilamentProovit\Support\Filament\Widgets\ConnectionStatusWidget;
+use Proovit\FilamentProovit\Support\Filament\Widgets\ProofDepositWidget;
 use Proovit\FilamentProovit\Support\Filament\Widgets\RecentProofsWidget;
 
 final class FilamentProovitPlugin implements Plugin
@@ -35,6 +36,7 @@ final class FilamentProovitPlugin implements Plugin
                 ProovitSettings::class,
             ])
             ->widgets([
+                ProofDepositWidget::class,
                 ConnectionStatusWidget::class,
                 RecentProofsWidget::class,
             ]);

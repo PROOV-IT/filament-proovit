@@ -65,6 +65,7 @@ return [
             'body' => 'Choose the API endpoint, enter your credentials, test the connection, then select the company to bind to this panel.',
         ],
         'actions' => [
+            'create_account' => 'Create account',
             'save' => 'Save settings',
             'test_connection' => 'Test connection',
         ],
@@ -151,6 +152,54 @@ return [
         'empty' => [
             'heading' => 'No proofs found',
             'description' => 'Create or import a proof in ProovIT to start monitoring its lifecycle here.',
+        ],
+    ],
+
+    'proof_deposit' => [
+        'heading' => 'Create a proof',
+        'actions' => [
+            'deposit' => 'Create proof',
+        ],
+        'notifications' => [
+            'created_title' => 'Proof created',
+            'created_body' => 'The proof has been initialized and its files have been submitted.',
+            'failed_title' => 'Proof creation failed',
+        ],
+        'sections' => [
+            'proof' => 'Proof',
+            'proof_description' => 'Provide the proof identity and the ProovIT template identifiers.',
+            'metadata' => 'Metadata',
+            'metadata_description' => 'Optional recipients, keywords, location and custom fields.',
+            'files' => 'Files and signature',
+            'files_description' => 'Upload the source files and optionally provide a base64 signature payload.',
+        ],
+        'fields' => [
+            'name' => 'Name',
+            'description' => 'Description',
+            'folder_id' => 'Folder UUID',
+            'category_id' => 'Category UUID',
+            'token_reservation_id' => 'Token reservation UUID',
+            'proof_template_id' => 'Proof template UUID',
+            'share_emails' => 'Share emails',
+            'keywords' => 'Keywords',
+            'is_anonymous' => 'Anonymous',
+            'location' => 'Location',
+            'lat' => 'Latitude',
+            'lng' => 'Longitude',
+            'custom_fields' => 'Custom fields',
+            'files' => 'Files',
+            'signature_base64' => 'Signature base64',
+        ],
+        'helpers' => [
+            'signature_base64' => 'Optional. Leave empty when the selected proof model does not require a signature.',
+        ],
+        'placeholders' => [
+            'share_emails' => 'Add recipient email addresses',
+            'keywords' => 'Add keywords',
+        ],
+        'empty' => [
+            'heading' => 'No proof draft created yet',
+            'description' => 'Use the button above to open the proof creation modal and initialize a new proof.',
         ],
     ],
 

@@ -91,9 +91,20 @@ final class ProovitSettings extends Page
     protected function getFormActions(): array
     {
         return [
+            $this->createAccountFormAction(),
             $this->testConnectionFormAction(),
             $this->getSaveFormAction(),
         ];
+    }
+
+    private function createAccountFormAction(): Action
+    {
+        return Action::make('create_account')
+            ->label(__('filament-proovit::filament-proovit.settings.actions.create_account'))
+            ->icon('heroicon-o-arrow-top-right-on-square')
+            ->color('gray')
+            ->url($this->createAccountUrl())
+            ->openUrlInNewTab();
     }
 
     private function testConnectionFormAction(): Action
@@ -218,6 +229,15 @@ final class ProovitSettings extends Page
         }
 
         return $options;
+    }
+
+    private function createAccountUrl(): string
+    {
+        if (app()->environment('production')) {
+            return 'https://app.proov-it.online';
+        }
+
+        return 'https://app.staging.proov-it.online';
     }
 
     private function connectionConfigFromState(array $state): ProovitConfig

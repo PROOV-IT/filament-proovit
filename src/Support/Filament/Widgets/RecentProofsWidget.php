@@ -4,23 +4,33 @@ declare(strict_types=1);
 
 namespace Proovit\FilamentProovit\Support\Filament\Widgets;
 
+use Filament\Actions\Action;
 use Filament\Support\ArrayRecord;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Collection;
+use Proovit\FilamentProovit\Pages\ProovitProofView;
+use Proovit\FilamentProovit\Support\Filament\ProovitDashboardData;
 use Proovit\LaravelProovit\ProovitClient;
-use Throwable;
 
 final class RecentProofsWidget extends TableWidget
 {
     protected static ?int $sort = 2;
 
+    protected int|string|array $columnSpan = 'full';
+
     public function table(Table $table): Table
     {
         return $table
             ->heading($this->getTableHeading())
+            ->headerActions([
+                Action::make('refresh')
+                    ->label(__('filament-proovit::filament-proovit.widgets.recent_proofs.actions.refresh'))
+                    ->icon('heroicon-o-arrow-path')
+                    ->action(fn (): mixed => $this->dispatch('$refresh')),
+            ])
             ->records(fn (): Collection => $this->proofRecords())
             ->columns([
                 TextColumn::make('name')
@@ -35,6 +45,12 @@ final class RecentProofsWidget extends TableWidget
             ])
             ->paginated(false)
             ->recordTitleAttribute('name')
+            ->recordActions([
+                Action::make('view')
+                    ->label(__('filament-proovit::filament-proovit.proofs.actions.view'))
+                    ->icon('heroicon-o-eye')
+                    ->url(static fn (array $record): string => ProovitProofView::getUrl(['proof' => (string) ($record['id'] ?? '')])),
+            ])
             ->striped();
     }
 
@@ -49,11 +65,9 @@ final class RecentProofsWidget extends TableWidget
     private function proofRecords(): Collection
     {
         try {
-            $proofs = app(ProovitClient::class)->proofs()->list([
-                'limit' => 5,
-            ]);
+            $proofs = ProovitDashboardData::fromClient(app(ProovitClient::class), 5);
 
-            return collect(array_values((array) ($proofs['data'] ?? $proofs['items'] ?? $proofs['proofs'] ?? [])))
+            return collect($proofs->recentProofs)
                 ->map(static function (array $proof): array {
                     return [
                         ArrayRecord::getKeyName() => (string) ($proof['id'] ?? uniqid('proof_', true)),
@@ -63,7 +77,7 @@ final class RecentProofsWidget extends TableWidget
                         'signed_at' => (string) ($proof['signed_at'] ?? ''),
                     ];
                 });
-        } catch (Throwable) {
+        } catch (\Throwable) {
             return collect();
         }
     }

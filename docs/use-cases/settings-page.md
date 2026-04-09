@@ -21,9 +21,9 @@ The ProovIT Filament plugin ships with a dedicated configuration page.
 ## Authentication flow
 
 The page exposes an `Authenticate` action.
-It asks for the password only, then the plugin:
+It asks for the email and the password, then the plugin:
 
-1. logs into the ProovIT API
+1. logs into the ProovIT API using the provided email and password
 2. fetches the available companies
 3. stores the bearer token and company list in the persistent settings store
 4. clears the previous selected company so the user can choose the new target company

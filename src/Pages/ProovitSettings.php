@@ -95,6 +95,13 @@ final class ProovitSettings extends Page
                 ->label(__('filament-proovit::filament-proovit.settings.actions.authenticate'))
                 ->icon('heroicon-o-key')
                 ->form([
+                    TextInput::make('email')
+                        ->label(__('filament-proovit::filament-proovit.settings.fields.login_email'))
+                        ->email()
+                        ->required()
+                        ->default($this->currentAuthenticationEmail())
+                        ->autocomplete('email')
+                        ->maxLength(255),
                     TextInput::make('password')
                         ->label(__('filament-proovit::filament-proovit.settings.fields.password'))
                         ->password()
@@ -105,7 +112,10 @@ final class ProovitSettings extends Page
                 ])
                 ->action(function (array $data): void {
                     try {
-                        $connection = $this->authenticate((string) ($data['password'] ?? ''));
+                        $connection = $this->authenticate(
+                            (string) ($data['email'] ?? $this->currentAuthenticationEmail()),
+                            (string) ($data['password'] ?? ''),
+                        );
                         $this->persistConnection($connection, false);
 
                         Notification::make()
@@ -214,7 +224,7 @@ final class ProovitSettings extends Page
         return (array) data_get(app(ProovitSettingsRepository::class)->all(), 'connection.companies', []);
     }
 
-    private function authenticate(string $password): ProovitConnectionData
+    private function authenticate(string $email, string $password): ProovitConnectionData
     {
         $currentConfig = app(ProovitConfig::class);
         $state = $this->form->getState();
@@ -222,7 +232,7 @@ final class ProovitSettings extends Page
         $configPayload = array_replace_recursive(app(ProovitSettingsRepository::class)->all(), $currentConfig->toArray(), [
             'connection' => [
                 'base_url' => $state['connection']['base_url'] ?? $currentConfig->baseUrl,
-                'login_email' => $state['connection']['login_email'] ?? $currentConfig->loginEmail,
+                'login_email' => $email !== '' ? $email : ($state['connection']['login_email'] ?? $currentConfig->loginEmail),
             ],
         ]);
 
@@ -232,7 +242,7 @@ final class ProovitSettings extends Page
         $loginClient = new ProovitApiClient($factory->make($temporaryConfig));
         $loginPayload = $loginClient->request('POST', '/v1/auth/login', [
             'json' => [
-                'email' => (string) ($temporaryConfig->loginEmail ?? ''),
+                'email' => (string) ($temporaryConfig->loginEmail ?? $email),
                 'password' => $password,
             ],
         ]);
@@ -272,7 +282,7 @@ final class ProovitSettings extends Page
             'selected_company_uuid' => null,
             'workspace_token' => null,
             'company_name' => null,
-            'login_email' => $temporaryConfig->loginEmail,
+            'login_email' => $temporaryConfig->loginEmail ?? $email,
             'companies' => array_values((array) ($companiesPayload['data'] ?? $companiesPayload['items'] ?? $companiesPayload['companies'] ?? $companiesPayload)),
             'payload' => $loginPayload,
         ]);
@@ -342,6 +352,16 @@ final class ProovitSettings extends Page
         }
 
         return $payload;
+    }
+
+    private function currentAuthenticationEmail(): string
+    {
+        $stateEmail = (string) data_get($this->form->getState(), 'connection.login_email', '');
+        if ($stateEmail !== '') {
+            return $stateEmail;
+        }
+
+        return (string) (app(ProovitConfig::class)->loginEmail ?? '');
     }
 
 }

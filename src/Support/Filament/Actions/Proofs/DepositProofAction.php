@@ -10,10 +10,12 @@ use Filament\Widgets\TableWidget;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
 use Proovit\FilamentProovit\Support\Filament\Schemas\Proofs\ProofDepositActionSchema;
+use Proovit\FilamentProovit\Support\ProovitProofTemplateCatalog;
 use Proovit\LaravelProovit\Builders\Proofs\ProofBuilder;
 use Proovit\LaravelProovit\Builders\Proofs\ProofFilesBuilder;
 use Proovit\LaravelProovit\Builders\Proofs\ProofMetadataBuilder;
 use Proovit\LaravelProovit\Builders\Proofs\ProofSignatureBuilder;
+use Proovit\LaravelProovit\DTOs\ProofTemplateData;
 use Proovit\LaravelProovit\ProovitClient;
 use Throwable;
 
@@ -29,7 +31,8 @@ final class DepositProofAction
             ->modalWidth('7xl')
             ->action(function (array $data, TableWidget $livewire): void {
                 try {
-                    $proofBuilder = self::buildProofBuilder($data);
+                    $template = self::templateFromData($data);
+                    $proofBuilder = self::buildProofBuilder($data, $template);
                     $client = app(ProovitClient::class);
                     $proof = $client->proofs()->init($proofBuilder);
 
@@ -61,22 +64,36 @@ final class DepositProofAction
     /**
      * @param  array<string, mixed>  $data
      */
-    private static function buildProofBuilder(array $data): ProofBuilder
+    private static function buildProofBuilder(array $data, ?ProofTemplateData $template = null): ProofBuilder
     {
         $builder = app(ProovitClient::class)->proofBuilder()
             ->withName((string) Arr::get($data, 'name', ''))
             ->withDescription(Arr::get($data, 'description'))
-            ->withFolderId((string) Arr::get($data, 'folder_id', ''))
-            ->withCategoryId(Arr::get($data, 'category_id'))
             ->withTokenReservationId((string) Arr::get($data, 'token_reservation_id', ''))
             ->withProofTemplateId((string) Arr::get($data, 'proof_template_id', ''));
 
-        $builder->withMetadata(static function (ProofMetadataBuilder $metadata) use ($data): void {
+        if ($template === null || $template->displayFolders()) {
+            $builder->withFolderId((string) Arr::get($data, 'folder_id', ''));
+        }
+
+        if ($template === null || $template->displayCategories()) {
+            $builder->withCategoryId(Arr::get($data, 'category_id'));
+        }
+
+        $builder->withMetadata(static function (ProofMetadataBuilder $metadata) use ($data, $template): void {
             $metadata
-                ->withShareEmails(array_values(array_filter((array) Arr::get($data, 'share_emails', []))))
+                ->withShareEmails(
+                    ($template === null || $template->isShared())
+                        ? array_values(array_filter((array) Arr::get($data, 'share_emails', [])))
+                        : [],
+                )
                 ->withAnonymous((bool) Arr::get($data, 'is_anonymous', false))
-                ->withKeywords(array_values(array_filter((array) Arr::get($data, 'keywords', []))))
-                ->withCustomFields((array) Arr::get($data, 'custom_fields', []));
+                ->withKeywords(
+                    ($template === null || $template->displayTags())
+                        ? array_values(array_filter((array) Arr::get($data, 'keywords', [])))
+                        : [],
+                )
+                ->withCustomFields(self::customFieldsFromData($data, $template));
 
             $location = trim((string) Arr::get($data, 'location', ''));
             $lat = Arr::get($data, 'lat');
@@ -153,6 +170,31 @@ final class DepositProofAction
         }
 
         return $builder;
+    }
+
+    private static function templateFromData(array $data): ?ProofTemplateData
+    {
+        return app(ProovitProofTemplateCatalog::class)->find((string) Arr::get($data, 'proof_template_id', ''));
+    }
+
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
+    private static function customFieldsFromData(array $data, ?ProofTemplateData $template): array
+    {
+        $customFields = (array) Arr::get($data, 'custom_fields', []);
+
+        if ($template === null) {
+            return $customFields;
+        }
+
+        $allowedKeys = array_flip(array_map(
+            static fn ($field): string => $field->key,
+            $template->customFields(),
+        ));
+
+        return array_intersect_key($customFields, $allowedKeys);
     }
 
     /**

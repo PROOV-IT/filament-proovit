@@ -170,8 +170,13 @@ return [
             'proof_description' => 'Provide the proof identity and the ProovIT template identifiers.',
             'metadata' => 'Metadata',
             'metadata_description' => 'Optional recipients, keywords, location and custom fields.',
+            'custom_fields' => 'Template fields',
+            'custom_fields_description' => 'These fields are generated from the selected proof template and adapt to its schema.',
             'files' => 'Files and signature',
             'files_description' => 'Upload the source files and optionally provide a base64 signature payload.',
+            'files_required' => 'Required files: :files',
+            'signature' => 'Signature',
+            'signature_description' => 'Only shown when the selected template requires a signature.',
         ],
         'fields' => [
             'name' => 'Name',
@@ -192,6 +197,11 @@ return [
         ],
         'helpers' => [
             'signature_base64' => 'Optional. Leave empty when the selected proof model does not require a signature.',
+        ],
+        'template_summary' => [
+            'signature' => 'Signature required',
+            'no_signature' => 'No signature required',
+            'required_files' => 'Required files: :files',
         ],
         'placeholders' => [
             'share_emails' => 'Add recipient email addresses',

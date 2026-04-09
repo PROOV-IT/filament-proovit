@@ -109,8 +109,13 @@ return [
             'proof_description' => 'Renseigne l’identité de la preuve et les identifiants du modèle ProovIT.',
             'metadata' => 'Métadonnées',
             'metadata_description' => 'Destinataires, mots-clés, localisation et champs personnalisés optionnels.',
+            'custom_fields' => 'Champs du modèle',
+            'custom_fields_description' => 'Ces champs sont générés à partir du modèle de preuve sélectionné et s’adaptent à son schéma.',
             'files' => 'Fichiers et signature',
             'files_description' => 'Envoie les fichiers source et renseigne éventuellement une signature base64.',
+            'files_required' => 'Fichiers requis : :files',
+            'signature' => 'Signature',
+            'signature_description' => 'Visible uniquement lorsque le modèle sélectionné exige une signature.',
         ],
         'fields' => [
             'name' => 'Nom',
@@ -131,6 +136,11 @@ return [
         ],
         'helpers' => [
             'signature_base64' => 'Optionnel. Laisse vide lorsque le modèle de preuve sélectionné ne nécessite pas de signature.',
+        ],
+        'template_summary' => [
+            'signature' => 'Signature requise',
+            'no_signature' => 'Aucune signature requise',
+            'required_files' => 'Fichiers requis : :files',
         ],
         'placeholders' => [
             'share_emails' => 'Ajouter des adresses email de destinataires',

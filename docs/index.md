@@ -8,6 +8,7 @@ This package provides Filament-native screens and widgets for the ProovIT integr
 - [Configuration](configuration.md)
 - [Use cases](use-cases/)
 - [Settings page](use-cases/settings-page.md)
+- [Proof deposit](use-cases/proof-deposit.md)
 - [Proofs page](use-cases/proofs-page.md)
 - [Certificates page](use-cases/certificates-page.md)
 - [Proof detail page](use-cases/proof-view-page.md)

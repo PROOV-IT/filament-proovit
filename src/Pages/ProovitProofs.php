@@ -82,7 +82,9 @@ final class ProovitProofs extends Page implements HasTable
         return ProofsTable::make(
             $table,
             fn (): array => $this->loadProofs(),
-            fn (string $proofId): void => $this->revokeProof($proofId),
+            function (string $proofId): void {
+                $this->revokeProof($proofId);
+            },
         );
     }
 

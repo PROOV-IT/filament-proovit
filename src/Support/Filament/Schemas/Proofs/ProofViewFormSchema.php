@@ -4,18 +4,26 @@ declare(strict_types=1);
 
 namespace Proovit\FilamentProovit\Support\Filament\Schemas\Proofs;
 
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Radio;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Section;
+use Proovit\LaravelProovit\DTOs\ProofTemplateCustomFieldData;
+use Proovit\LaravelProovit\DTOs\ProofTemplateData;
 
 final class ProofViewFormSchema
 {
     /**
      * @return array<int, Component>
      */
-    public static function schema(): array
+    public static function schema(?ProofTemplateData $template = null): array
     {
+        $templateFieldComponents = $template === null ? [] : self::templateFieldComponents($template);
+
         return [
             Section::make(__('filament-proovit::filament-proovit.proof_view.sections.summary'))
                 ->columns(2)
@@ -45,6 +53,38 @@ final class ProofViewFormSchema
                         ->disabled()
                         ->dehydrated(false),
                 ]),
+            Section::make(__('filament-proovit::filament-proovit.proof_view.sections.template'))
+                ->columns(2)
+                ->visible($template !== null)
+                ->schema([
+                    TextInput::make('template_name')
+                        ->label(__('filament-proovit::filament-proovit.proof_view.fields.template_name'))
+                        ->disabled()
+                        ->dehydrated(false),
+                    TextInput::make('template_slug')
+                        ->label(__('filament-proovit::filament-proovit.proof_view.fields.template_slug'))
+                        ->disabled()
+                        ->dehydrated(false),
+                    Textarea::make('template_description')
+                        ->label(__('filament-proovit::filament-proovit.proof_view.fields.template_description'))
+                        ->disabled()
+                        ->dehydrated(false)
+                        ->rows(3)
+                        ->columnSpanFull(),
+                    TextInput::make('template_signature')
+                        ->label(__('filament-proovit::filament-proovit.proof_view.fields.template_signature'))
+                        ->disabled()
+                        ->dehydrated(false),
+                    TextInput::make('template_required_files')
+                        ->label(__('filament-proovit::filament-proovit.proof_view.fields.template_required_files'))
+                        ->disabled()
+                        ->dehydrated(false)
+                        ->columnSpanFull(),
+                ]),
+            Section::make(__('filament-proovit::filament-proovit.proof_view.sections.template_fields'))
+                ->columns(2)
+                ->schema($templateFieldComponents)
+                ->visible($templateFieldComponents !== []),
             Section::make(__('filament-proovit::filament-proovit.proof_view.sections.metadata'))
                 ->columns(2)
                 ->schema([
@@ -68,5 +108,54 @@ final class ProofViewFormSchema
                         ->columnSpanFull(),
                 ]),
         ];
+    }
+
+    /**
+     * @return array<int, Component>
+     */
+    private static function templateFieldComponents(ProofTemplateData $template): array
+    {
+        return array_map(
+            static fn (ProofTemplateCustomFieldData $field): Component => self::templateFieldComponent($field),
+            $template->customFields(),
+        );
+    }
+
+    private static function templateFieldComponent(ProofTemplateCustomFieldData $field): Component
+    {
+        $path = sprintf('template_fields.%s', $field->key);
+
+        return match (strtolower($field->type)) {
+            'textarea' => Textarea::make($path)
+                ->label($field->label)
+                ->disabled()
+                ->dehydrated(false)
+                ->rows(3)
+                ->columnSpanFull(),
+            'select' => Select::make($path)
+                ->label($field->label)
+                ->options($field->optionList())
+                ->disabled()
+                ->dehydrated(false)
+                ->columnSpanFull(),
+            'radio' => Radio::make($path)
+                ->label($field->label)
+                ->options($field->optionList())
+                ->disabled()
+                ->dehydrated(false)
+                ->columnSpanFull(),
+            'date' => DatePicker::make($path)
+                ->label($field->label)
+                ->disabled()
+                ->dehydrated(false),
+            'toggle', 'checkbox' => Toggle::make($path)
+                ->label($field->label)
+                ->disabled()
+                ->dehydrated(false),
+            default => TextInput::make($path)
+                ->label($field->label)
+                ->disabled()
+                ->dehydrated(false),
+        };
     }
 }

@@ -12,9 +12,12 @@ use Filament\Schemas\Components\EmbeddedSchema;
 use Filament\Schemas\Components\Form;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Proovit\FilamentProovit\Support\Filament\Schemas\Proofs\ProofViewFormSchema;
+use Proovit\FilamentProovit\Support\ProovitProofTemplateCatalog;
 use Proovit\LaravelProovit\DTOs\ProofData;
+use Proovit\LaravelProovit\DTOs\ProofTemplateData;
 use Proovit\LaravelProovit\ProovitClient;
 use Throwable;
 
@@ -23,6 +26,8 @@ final class ProovitProofView extends Page
     public array $data = [];
 
     public ?string $proofId = null;
+
+    private ?ProofTemplateData $currentTemplate = null;
 
     protected static ?string $slug = 'proovit/proofs/{proof}';
 
@@ -68,7 +73,7 @@ final class ProovitProofView extends Page
 
     public function form(Schema $schema): Schema
     {
-        return $schema->components(ProofViewFormSchema::schema());
+        return $schema->components(ProofViewFormSchema::schema($this->currentTemplate));
     }
 
     public function content(Schema $schema): Schema
@@ -136,6 +141,8 @@ final class ProovitProofView extends Page
         $proof = $client->proofs()->show($this->proofId);
         $history = $client->proofs()->history($this->proofId);
         $certificate = $proof->certificateUrl;
+        $template = $this->templateFromProof($proof);
+        $this->currentTemplate = $template;
 
         if (! filled($certificate) && ! in_array($proof->status, ['revoked', 'deleted'], true)) {
             try {
@@ -145,15 +152,17 @@ final class ProovitProofView extends Page
             }
         }
 
-        $this->form->fill($this->proofDataToState($proof, $history, $certificate));
+        $this->form->fill($this->proofDataToState($proof, $history, $certificate, $template));
     }
 
     /**
      * @param  array<int, array<string, mixed>>  $history
      * @return array<string, mixed>
      */
-    private function proofDataToState(ProofData $proof, array $history, ?string $certificateUrl): array
+    private function proofDataToState(ProofData $proof, array $history, ?string $certificateUrl, ?ProofTemplateData $template): array
     {
+        $metadata = $proof->metadata;
+
         return [
             'name' => $proof->name,
             'title' => $proof->raw['title'] ?? $proof->name,
@@ -163,9 +172,51 @@ final class ProovitProofView extends Page
             'signed_at' => $proof->signedAt,
             'certificate_url' => $certificateUrl,
             'description' => $proof->description,
-            'metadata' => $this->encodeJson($proof->metadata),
+            'template_name' => $template?->name,
+            'template_slug' => $template?->slug,
+            'template_description' => $template?->description,
+            'template_signature' => $template?->requiresSignature() ? __('filament-proovit::filament-proovit.proof_view.template.signature_required') : __('filament-proovit::filament-proovit.proof_view.template.no_signature_required'),
+            'template_required_files' => $template !== null ? implode(', ', $template->requiredFiles()) : null,
+            'template_fields' => $this->templateFieldsState($template, $metadata),
+            'metadata' => $this->encodeJson($metadata),
             'history' => $this->encodeJson($history),
         ];
+    }
+
+    private function templateFromProof(ProofData $proof): ?ProofTemplateData
+    {
+        $templateId = (string) (Arr::get($proof->raw, 'template.id')
+            ?? Arr::get($proof->raw, 'template.uuid')
+            ?? Arr::get($proof->raw, 'proof_template.id')
+            ?? Arr::get($proof->raw, 'proof_template_id')
+            ?? Arr::get($proof->metadata, 'template.id')
+            ?? Arr::get($proof->metadata, 'template_id')
+            ?? '');
+
+        if ($templateId === '') {
+            return null;
+        }
+
+        return app(ProovitProofTemplateCatalog::class)->find($templateId);
+    }
+
+    /**
+     * @param  array<string, mixed>  $metadata
+     * @return array<string, mixed>
+     */
+    private function templateFieldsState(?ProofTemplateData $template, array $metadata): array
+    {
+        if ($template === null) {
+            return [];
+        }
+
+        $customFields = (array) Arr::get($metadata, 'custom_fields', []);
+
+        return array_reduce($template->customFields(), static function (array $carry, $field) use ($customFields): array {
+            $carry[$field->key] = $customFields[$field->key] ?? null;
+
+            return $carry;
+        }, []);
     }
 
     /**

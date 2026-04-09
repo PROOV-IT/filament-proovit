@@ -100,7 +100,7 @@ final class ProovitSettings extends Page
     {
         return Action::make('test_connection')
             ->label(__('filament-proovit::filament-proovit.settings.actions.test_connection'))
-            ->icon('heroicon-o-plug')
+            ->icon('heroicon-o-bolt')
             ->color('gray')
             ->action(function (): void {
                 $this->testConnection();

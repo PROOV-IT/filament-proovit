@@ -27,10 +27,10 @@ composer require proovit/filament-proovit
 - [Configuration](docs/configuration.md)
 - [Use cases](docs/use-cases/)
 - [Release notes](docs/release-notes.md)
+- [V1 scope](docs/use-cases/v1-scope.md)
 
 ## Acknowledgements
 
 - [Laravel](https://laravel.com)
 - [Filament](https://filamentphp.com)
 - [Spatie Laravel Package Tools](https://github.com/spatie/laravel-package-tools)
-

@@ -4,33 +4,52 @@ The ProovIT Filament plugin ships with a dedicated configuration page.
 
 ## Purpose
 
-- authenticate against ProovIT with email and password
-- load the list of companies returned by the API
+- choose the ProovIT API endpoint
+- enter your login email and password
+- test the connection against the live API
+- load the list of companies returned by ProovIT
 - select the company UUID that will be used for subsequent requests
-- persist the session in the package settings store
-- keep the browser UI small and focused on the active connection
+- persist the connection data in the encrypted settings store
 
 ## What it edits
 
 - API base URL
 - login email
+- login password
+- bearer token
 - selected company UUID
 - selected company display name
-- authenticated bearer token and company list stored behind the scenes
+- company list returned by the API
 
-## Authentication flow
+## Connection flow
 
-The page exposes an `Authenticate` action.
-It asks for the email and the password, then the plugin:
+The page exposes a `Test connection` action.
+It reads the current form state, then the plugin:
 
-1. logs into the ProovIT API using the provided email and password
-2. fetches the available companies
-3. stores the bearer token and company list in the persistent settings store
-4. clears the previous selected company so the user can choose the new target company
+1. builds a temporary SDK configuration from the current endpoint and stored values
+2. logs into the ProovIT API using the provided email and password
+3. fetches the available companies with the returned bearer token
+4. stores the endpoint, login, password, bearer token, and company list in the persistent settings store
+5. keeps the selected company as-is when it is still valid, otherwise waits for the user to choose a company
 
-## Behavior
+## Persistence rules
 
 - the page stores its session in the encrypted settings table shipped by `laravel-proovit`
 - saved values override the matching SDK config entries
-- if no company is selected yet, the page keeps the session but waits for the user to choose one
-- the canonical persisted key is `connection.selected_company_uuid`; `connection.workspace_token` is still written for backward compatibility
+- the canonical persisted key is `connection.selected_company_uuid`
+- `connection.workspace_token` is still written for backward compatibility
+- the saved settings are synchronized back into the page state after a successful test or save, without clearing the form
+
+## Recommended flow
+
+1. choose the API endpoint
+2. enter your credentials
+3. test the connection
+4. select the company UUID
+5. save the settings
+
+## Notes
+
+- the package intentionally keeps the UI compact
+- the connection test does not require a modal
+- the dropdown of companies only becomes useful after a successful authentication

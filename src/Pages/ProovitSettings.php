@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Proovit\FilamentProovit\Pages;
 
 use Filament\Actions\Action;
-use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Actions as SchemaActions;
@@ -59,32 +58,31 @@ final class ProovitSettings extends Page
 
     public function mount(): void
     {
-        $this->data = array_replace_recursive(
-            app(ProovitConfig::class)->toArray(),
-            app(ProovitSettingsRepository::class)->all(),
-        );
+        $this->data = $this->payloadFromState();
     }
 
     public function defaultForm(Schema $schema): Schema
     {
-        return $schema
-            ->statePath('data');
+        return $schema->statePath('data');
     }
 
     public function form(Schema $schema): Schema
     {
-        return $schema
-            ->components(ProovitSettingsFormSchema::schema($this->companyOptions()));
+        return $schema->components(
+            ProovitSettingsFormSchema::schema(
+                $this->companyOptions(),
+                $this->baseUrlOptions(),
+            ),
+        );
     }
 
     public function content(Schema $schema): Schema
     {
-        return $schema
-            ->components([
-                Section::make(__('filament-proovit::filament-proovit.settings.note.heading'))
-                    ->description(__('filament-proovit::filament-proovit.settings.note.body')),
-                $this->getFormContentComponent(),
-            ]);
+        return $schema->components([
+            Section::make(__('filament-proovit::filament-proovit.settings.note.heading'))
+                ->description(__('filament-proovit::filament-proovit.settings.note.body')),
+            $this->getFormContentComponent(),
+        ]);
     }
 
     /**
@@ -93,68 +91,19 @@ final class ProovitSettings extends Page
     protected function getFormActions(): array
     {
         return [
-            $this->authenticateFormAction(),
-            $this->reloadFormAction(),
+            $this->testConnectionFormAction(),
             $this->getSaveFormAction(),
         ];
     }
 
-    private function authenticateFormAction(): Action
+    private function testConnectionFormAction(): Action
     {
-        return Action::make('authenticate')
-            ->label(__('filament-proovit::filament-proovit.settings.actions.authenticate'))
-            ->icon('heroicon-o-key')
-            ->color('gray')
-            ->form([
-                TextInput::make('email')
-                    ->label(__('filament-proovit::filament-proovit.settings.fields.login_email'))
-                    ->email()
-                    ->required()
-                    ->default($this->currentAuthenticationEmail())
-                    ->autocomplete('email')
-                    ->maxLength(255),
-                TextInput::make('password')
-                    ->label(__('filament-proovit::filament-proovit.settings.fields.password'))
-                    ->password()
-                    ->revealable()
-                    ->required()
-                    ->autocomplete('current-password')
-                    ->maxLength(255),
-            ])
-            ->action(function (array $data): void {
-                try {
-                    $connection = $this->authenticate(
-                        (string) ($data['email'] ?? $this->currentAuthenticationEmail()),
-                        (string) ($data['password'] ?? ''),
-                    );
-                    $this->persistConnection($connection, false);
-
-                    Notification::make()
-                        ->title(__('filament-proovit::filament-proovit.settings.notifications.authenticated_title'))
-                        ->body(__('filament-proovit::filament-proovit.settings.notifications.authenticated_body'))
-                        ->success()
-                        ->send();
-                } catch (Throwable $exception) {
-                    Notification::make()
-                        ->title(__('filament-proovit::filament-proovit.settings.notifications.authenticate_failed_title'))
-                        ->body($exception->getMessage())
-                        ->danger()
-                        ->send();
-                }
-            });
-    }
-
-    private function reloadFormAction(): Action
-    {
-        return Action::make('reload')
-            ->label(__('filament-proovit::filament-proovit.settings.actions.reload'))
-            ->icon('heroicon-o-arrow-path')
+        return Action::make('test_connection')
+            ->label(__('filament-proovit::filament-proovit.settings.actions.test_connection'))
+            ->icon('heroicon-o-plug')
             ->color('gray')
             ->action(function (): void {
-                $this->data = array_replace_recursive(
-                    app(ProovitConfig::class)->toArray(),
-                    app(ProovitSettingsRepository::class)->all(),
-                );
+                $this->testConnection();
             });
     }
 
@@ -166,19 +115,19 @@ final class ProovitSettings extends Page
             ->submit('save');
     }
 
-    public function save(): void
+    public function testConnection(): void
     {
         try {
-            $state = $this->data;
-            $settings = app(ProovitSettingsRepository::class);
-            $payload = array_replace_recursive(
-                app(ProovitSettingsRepository::class)->all(),
-                app(ProovitConfig::class)->toArray(),
-                $state,
+            $state = $this->payloadFromState();
+            $connection = app(AuthenticateProovitConnectionAction::class)->handle(
+                (string) data_get($state, 'connection.login_email', ''),
+                (string) data_get($state, 'connection.login_password', ''),
+                $this->connectionConfigFromState($state),
             );
-            $payload = $this->syncSelectedCompanyName($payload);
 
-            if (! $settings->save($payload)) {
+            $payload = $this->persistedPayloadFromConnection($state, $connection);
+
+            if (! $this->persistPayload($payload)) {
                 Notification::make()
                     ->title(__('filament-proovit::filament-proovit.settings.notifications.save_failed_title'))
                     ->body(__('filament-proovit::filament-proovit.settings.notifications.save_failed_body'))
@@ -188,15 +137,38 @@ final class ProovitSettings extends Page
                 return;
             }
 
-            app()->forgetInstance(ProovitConfig::class);
-            app()->forgetInstance(ProovitConfigResolver::class);
-            app()->forgetInstance(ProovitClient::class);
-            app()->forgetInstance(ProovitFeatureManager::class);
+            $this->data = $this->payloadFromState();
 
-            $this->data = array_replace_recursive(
-                app(ProovitConfig::class)->toArray(),
-                app(ProovitSettingsRepository::class)->all(),
-            );
+            Notification::make()
+                ->title(__('filament-proovit::filament-proovit.settings.notifications.authenticated_title'))
+                ->body(__('filament-proovit::filament-proovit.settings.notifications.authenticated_body'))
+                ->success()
+                ->send();
+        } catch (Throwable $exception) {
+            Notification::make()
+                ->title(__('filament-proovit::filament-proovit.settings.notifications.authenticate_failed_title'))
+                ->body($exception->getMessage())
+                ->danger()
+                ->send();
+        }
+    }
+
+    public function save(): void
+    {
+        try {
+            $payload = $this->syncSelectedCompanyName($this->payloadFromState());
+
+            if (! $this->persistPayload($payload)) {
+                Notification::make()
+                    ->title(__('filament-proovit::filament-proovit.settings.notifications.save_failed_title'))
+                    ->body(__('filament-proovit::filament-proovit.settings.notifications.save_failed_body'))
+                    ->danger()
+                    ->send();
+
+                return;
+            }
+
+            $this->data = $this->payloadFromState();
 
             Notification::make()
                 ->title(__('filament-proovit::filament-proovit.settings.notifications.saved_title'))
@@ -226,51 +198,72 @@ final class ProovitSettings extends Page
      */
     protected function companyOptions(): array
     {
-        return (array) data_get(app(ProovitSettingsRepository::class)->all(), 'connection.companies', []);
+        return (array) data_get($this->data, 'connection.companies', data_get(app(ProovitSettingsRepository::class)->all(), 'connection.companies', []));
     }
 
-    private function authenticate(string $email, string $password): ProovitConnectionData
+    /**
+     * @return array<string, string>
+     */
+    protected function baseUrlOptions(): array
     {
-        $currentConfig = app(ProovitConfig::class);
-        $loginEmail = $email !== '' ? $email : (string) ($currentConfig->loginEmail ?? '');
+        $options = [
+            'https://api.proov-it.online/api' => __('filament-proovit::filament-proovit.settings.base_urls.production'),
+            'https://api.staging.proov-it.online/api' => __('filament-proovit::filament-proovit.settings.base_urls.staging'),
+        ];
 
-        return app(AuthenticateProovitConnectionAction::class)->handle(
-            $loginEmail,
-            $password,
-        );
+        $currentBaseUrl = (string) data_get($this->data, 'connection.base_url', '');
+        if ($currentBaseUrl !== '' && ! array_key_exists($currentBaseUrl, $options)) {
+            $options = [$currentBaseUrl => $currentBaseUrl] + $options;
+        }
+
+        return $options;
     }
 
-    private function persistConnection(ProovitConnectionData $connection, bool $preserveSelectedCompany = true): void
+    private function connectionConfigFromState(array $state): ProovitConfig
     {
-        $settings = app(ProovitSettingsRepository::class);
-        $currentPayload = array_replace_recursive(
-            app(ProovitSettingsRepository::class)->all(),
+        $payload = array_replace_recursive(
             app(ProovitConfig::class)->toArray(),
+            app(ProovitSettingsRepository::class)->all(),
+            $state,
         );
+
+        return ProovitConfig::fromArray($payload);
+    }
+
+    /**
+     * @param  array<string, mixed>  $state
+     */
+    private function persistedPayloadFromConnection(array $state, ProovitConnectionData $connection): array
+    {
+        $currentPayload = array_replace_recursive(
+            app(ProovitConfig::class)->toArray(),
+            app(ProovitSettingsRepository::class)->all(),
+            $state,
+        );
+
+        $selectedCompanyUuid = (string) (data_get($state, 'connection.selected_company_uuid')
+            ?? data_get($state, 'connection.workspace_token')
+            ?? '');
+        $selectedCompany = $this->companyFromConnection($connection->companies, $selectedCompanyUuid);
+
+        if ($selectedCompany === null) {
+            $selectedCompanyUuid = null;
+        }
+
         $payload = array_replace_recursive($currentPayload, [
             'connection' => [
-                'base_url' => $connection->baseUrl ?? $currentPayload['connection']['base_url'] ?? null,
+                'base_url' => $connection->baseUrl ?? data_get($state, 'connection.base_url') ?? $currentPayload['connection']['base_url'] ?? null,
                 'access_token' => $connection->bearerToken,
-                'selected_company_uuid' => $preserveSelectedCompany ? ($currentPayload['connection']['selected_company_uuid'] ?? $currentPayload['connection']['workspace_token'] ?? null) : null,
-                'workspace_token' => $preserveSelectedCompany ? ($currentPayload['connection']['selected_company_uuid'] ?? $currentPayload['connection']['workspace_token'] ?? null) : null,
-                'company_name' => $connection->companyName,
-                'login_email' => $connection->loginEmail,
+                'selected_company_uuid' => $selectedCompanyUuid,
+                'workspace_token' => $selectedCompanyUuid,
+                'company_name' => $selectedCompany['name'] ?? null,
+                'login_email' => $connection->loginEmail ?? data_get($state, 'connection.login_email'),
+                'login_password' => data_get($state, 'connection.login_password'),
                 'companies' => $connection->companies,
             ],
         ]);
 
-        $payload = $this->syncSelectedCompanyName($payload);
-        $settings->save($payload);
-
-        app()->forgetInstance(ProovitConfig::class);
-        app()->forgetInstance(ProovitConfigResolver::class);
-        app()->forgetInstance(ProovitClient::class);
-        app()->forgetInstance(ProovitFeatureManager::class);
-
-        $this->form->fill(array_replace_recursive(
-            app(ProovitConfig::class)->toArray(),
-            app(ProovitSettingsRepository::class)->all(),
-        ));
+        return $this->syncSelectedCompanyName($payload);
     }
 
     /**
@@ -292,27 +285,69 @@ final class ProovitSettings extends Page
             return $payload;
         }
 
-        foreach ($companies as $company) {
-            if (($company['uuid'] ?? $company['id'] ?? null) !== $selectedUuid) {
-                continue;
-            }
+        $company = $this->companyFromConnection($companies, $selectedUuid);
+        if ($company === null) {
+            $payload['connection']['company_name'] = null;
+            $payload['connection']['selected_company_uuid'] = null;
+            $payload['connection']['workspace_token'] = null;
 
-            $payload['connection']['company_name'] = $company['name'] ?? null;
-            $payload['connection']['selected_company_uuid'] = $selectedUuid;
-            $payload['connection']['workspace_token'] = $selectedUuid;
-            break;
+            return $payload;
         }
+
+        $payload['connection']['company_name'] = $company['name'] ?? null;
+        $payload['connection']['selected_company_uuid'] = $selectedUuid;
+        $payload['connection']['workspace_token'] = $selectedUuid;
 
         return $payload;
     }
 
-    private function currentAuthenticationEmail(): string
+    /**
+     * @param  array<int, array<string, mixed>>  $companies
+     * @return array<string, mixed>|null
+     */
+    private function companyFromConnection(array $companies, string $selectedUuid): ?array
     {
-        $stateEmail = (string) data_get($this->data, 'connection.login_email', '');
-        if ($stateEmail !== '') {
-            return $stateEmail;
+        if ($selectedUuid === '') {
+            return null;
         }
 
-        return (string) (app(ProovitConfig::class)->loginEmail ?? '');
+        foreach ($companies as $company) {
+            $uuid = (string) ($company['uuid'] ?? $company['id'] ?? '');
+            if ($uuid === '' || $uuid !== $selectedUuid) {
+                continue;
+            }
+
+            return $company;
+        }
+
+        return null;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function payloadFromState(): array
+    {
+        return array_replace_recursive(
+            app(ProovitConfig::class)->toArray(),
+            app(ProovitSettingsRepository::class)->all(),
+            $this->data,
+        );
+    }
+
+    private function persistPayload(array $payload): bool
+    {
+        $settings = app(ProovitSettingsRepository::class);
+
+        if (! $settings->save($payload)) {
+            return false;
+        }
+
+        app()->forgetInstance(ProovitConfig::class);
+        app()->forgetInstance(ProovitConfigResolver::class);
+        app()->forgetInstance(ProovitClient::class);
+        app()->forgetInstance(ProovitFeatureManager::class);
+
+        return true;
     }
 }

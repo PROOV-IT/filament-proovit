@@ -61,12 +61,11 @@ return [
         'navigation' => 'Settings',
         'note' => [
             'heading' => 'Connection settings',
-            'body' => 'Authenticate with ProovIT, then select the company to bind to this panel.',
+            'body' => 'Choose the API endpoint, enter your credentials, test the connection, then select the company to bind to this panel.',
         ],
         'actions' => [
             'save' => 'Save settings',
-            'reload' => 'Reload',
-            'authenticate' => 'Authenticate',
+            'test_connection' => 'Test connection',
         ],
         'notifications' => [
             'authenticated_title' => 'Authenticated',
@@ -108,8 +107,12 @@ return [
             'password' => 'Password',
         ],
         'helpers' => [
-            'base_url' => 'Use the API base URL, including the /api prefix.',
-            'selected_company' => 'Authenticate first to load the list of companies you can bind to.',
+            'base_url' => 'Choose the API endpoint used by the SDK. The /api prefix is already included.',
+            'selected_company' => 'Test the connection first to load the companies you can bind to.',
+        ],
+        'base_urls' => [
+            'production' => 'Production',
+            'staging' => 'Staging',
         ],
     ],
 

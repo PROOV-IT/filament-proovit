@@ -145,12 +145,11 @@ return [
         'navigation' => 'Configuration',
         'note' => [
             'heading' => 'Connexion ProovIT',
-            'body' => 'Authentifie-toi sur ProovIT, puis choisis la société à rattacher à ce panel.',
+            'body' => 'Choisis l’endpoint API, saisis tes identifiants, teste la connexion, puis sélectionne la société à rattacher à ce panel.',
         ],
         'actions' => [
             'save' => 'Enregistrer',
-            'reload' => 'Recharger',
-            'authenticate' => 'Authentifier',
+            'test_connection' => 'Tester la connexion',
         ],
         'notifications' => [
             'authenticated_title' => 'Authentifié',
@@ -192,8 +191,12 @@ return [
             'password' => 'Mot de passe',
         ],
         'helpers' => [
-            'base_url' => 'Utilise l’URL de base de l’API, en incluant le préfixe /api.',
-            'selected_company' => 'Authentifie-toi d’abord pour charger la liste des sociétés disponibles.',
+            'base_url' => 'Choisis l’endpoint API utilisé par le SDK. Le préfixe /api est déjà inclus.',
+            'selected_company' => 'Teste d’abord la connexion pour charger la liste des sociétés disponibles.',
+        ],
+        'base_urls' => [
+            'production' => 'Production',
+            'staging' => 'Préproduction',
         ],
     ],
 ];

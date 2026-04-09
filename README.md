@@ -6,6 +6,7 @@ Filament 5 panel plugin for ProovIT proof supervision and certification workflow
 
 - adds a Filament-native overview of ProovIT integration status
 - exposes ready-to-use widgets and pages
+- ships with a minimal connection settings page for endpoint selection, credentials, test connection, and company binding
 - keeps ProovIT-specific workflows out of custom ad-hoc Blade views when possible
 
 ## Requirements

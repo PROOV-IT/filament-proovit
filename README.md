@@ -6,7 +6,7 @@ Filament 5 panel plugin for ProovIT proof supervision and certification workflow
 
 - adds a Filament-native overview of ProovIT integration status
 - exposes ready-to-use widgets and pages
-- includes a native proof deposit widget and a recent proofs table with view actions
+- includes native widgets for token balance, proof deposit, and recent proofs with view actions
 - ships with a minimal connection settings page for endpoint selection, credentials, test connection, and company binding
 - includes a one-click account creation shortcut that follows the current release branch
 - keeps ProovIT-specific workflows out of custom ad-hoc Blade views when possible

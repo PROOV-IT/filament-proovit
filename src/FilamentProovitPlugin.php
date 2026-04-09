@@ -13,6 +13,7 @@ use Proovit\FilamentProovit\Pages\ProovitSettings;
 use Proovit\FilamentProovit\Support\Filament\Widgets\ConnectionStatusWidget;
 use Proovit\FilamentProovit\Support\Filament\Widgets\ProofDepositWidget;
 use Proovit\FilamentProovit\Support\Filament\Widgets\RecentProofsWidget;
+use Proovit\FilamentProovit\Support\Filament\Widgets\TokenBalanceWidget;
 
 final class FilamentProovitPlugin implements Plugin
 {
@@ -37,6 +38,7 @@ final class FilamentProovitPlugin implements Plugin
             ])
             ->widgets([
                 ProofDepositWidget::class,
+                TokenBalanceWidget::class,
                 ConnectionStatusWidget::class,
                 RecentProofsWidget::class,
             ]);

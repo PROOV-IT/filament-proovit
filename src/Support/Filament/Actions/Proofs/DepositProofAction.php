@@ -32,7 +32,15 @@ final class DepositProofAction
             ->action(function (array $data, TableWidget $livewire): void {
                 try {
                     $template = self::templateFromData($data);
+                    $reservation = app(ProovitClient::class)->tokens()->reserve();
+                    $reservationId = (string) ($reservation->reservationId ?? '');
+
+                    if ($reservationId === '') {
+                        throw new \RuntimeException(__('filament-proovit::filament-proovit.proof_deposit.notifications.token_reservation_failed'));
+                    }
+
                     $proofBuilder = self::buildProofBuilder($data, $template);
+                    $proofBuilder->withTokenReservationId($reservationId);
                     $client = app(ProovitClient::class);
                     $proof = $client->proofs()->init($proofBuilder);
 
@@ -69,15 +77,16 @@ final class DepositProofAction
         $builder = app(ProovitClient::class)->proofBuilder()
             ->withName((string) Arr::get($data, 'name', ''))
             ->withDescription(Arr::get($data, 'description'))
-            ->withTokenReservationId((string) Arr::get($data, 'token_reservation_id', ''))
             ->withProofTemplateId((string) Arr::get($data, 'proof_template_id', ''));
 
-        if ($template === null || $template->displayFolders()) {
-            $builder->withFolderId((string) Arr::get($data, 'folder_id', ''));
+        $folderId = trim((string) Arr::get($data, 'folder_id', ''));
+        if (($template === null || $template->displayFolders()) && $folderId !== '') {
+            $builder->withFolderId($folderId);
         }
 
-        if ($template === null || $template->displayCategories()) {
-            $builder->withCategoryId(Arr::get($data, 'category_id'));
+        $categoryId = trim((string) Arr::get($data, 'category_id', ''));
+        if (($template === null || $template->displayCategories()) && $categoryId !== '') {
+            $builder->withCategoryId($categoryId);
         }
 
         $builder->withMetadata(static function (ProofMetadataBuilder $metadata) use ($data, $template): void {

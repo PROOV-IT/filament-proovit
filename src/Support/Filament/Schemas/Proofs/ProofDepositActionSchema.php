@@ -17,6 +17,8 @@ use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
+use Proovit\FilamentProovit\Support\ProovitCategoryCatalog;
+use Proovit\FilamentProovit\Support\ProovitFolderCatalog;
 use Proovit\FilamentProovit\Support\ProovitProofTemplateCatalog;
 use Proovit\LaravelProovit\DTOs\ProofTemplateCustomFieldData;
 use Proovit\LaravelProovit\DTOs\ProofTemplateData;
@@ -43,6 +45,8 @@ final class ProofDepositActionSchema
                         ->afterStateUpdated(static function (Set $set): void {
                             $set('custom_fields', []);
                             $set('signature_base64', null);
+                            $set('folder_id', null);
+                            $set('category_id', null);
                         })
                         ->columnSpanFull(),
                     TextInput::make('name')
@@ -53,19 +57,18 @@ final class ProofDepositActionSchema
                         ->label(__('filament-proovit::filament-proovit.proof_deposit.fields.description'))
                         ->rows(3)
                         ->columnSpanFull(),
-                    TextInput::make('folder_id')
+                    Select::make('folder_id')
                         ->label(__('filament-proovit::filament-proovit.proof_deposit.fields.folder_id'))
-                        ->maxLength(255)
-                        ->visible(static fn (Get $get): bool => self::template($get)?->displayFolders() ?? false),
-                    TextInput::make('category_id')
+                        ->options(static fn (): array => app(ProovitFolderCatalog::class)->options())
+                        ->searchable()
+                        ->preload()
+                        ->visible(static fn (Get $get): bool => (self::template($get)?->displayFolders() ?? false) && app(ProovitFolderCatalog::class)->options() !== []),
+                    Select::make('category_id')
                         ->label(__('filament-proovit::filament-proovit.proof_deposit.fields.category_id'))
-                        ->maxLength(255)
-                        ->visible(static fn (Get $get): bool => self::template($get)?->displayCategories() ?? false),
-                    TextInput::make('token_reservation_id')
-                        ->label(__('filament-proovit::filament-proovit.proof_deposit.fields.token_reservation_id'))
-                        ->required()
-                        ->maxLength(255)
-                        ->columnSpanFull(),
+                        ->options(static fn (): array => app(ProovitCategoryCatalog::class)->options())
+                        ->searchable()
+                        ->preload()
+                        ->visible(static fn (Get $get): bool => (self::template($get)?->displayCategories() ?? false) && app(ProovitCategoryCatalog::class)->options() !== []),
                     Placeholder::make('template_hint')
                         ->label(__('filament-proovit::filament-proovit.proof_deposit.fields.proof_template_id'))
                         ->content(static fn (Get $get): string => self::templateSummary($get))

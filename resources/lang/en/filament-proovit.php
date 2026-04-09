@@ -52,8 +52,16 @@ return [
             'name' => 'Name',
             'status' => 'Status',
             'description' => 'Description',
+            'view' => 'View',
             'empty' => 'No proofs found.',
             'no_description' => 'No description',
+        ],
+        'tokens' => [
+            'heading' => 'Token balance',
+            'description' => 'Available tokens for the selected ProovIT company.',
+            'balance' => 'Available tokens',
+            'company' => 'Company: :company',
+            'unknown_company' => 'Company not configured',
         ],
     ],
 
@@ -164,6 +172,7 @@ return [
             'created_title' => 'Proof created',
             'created_body' => 'The proof has been initialized and its files have been submitted.',
             'failed_title' => 'Proof creation failed',
+            'token_reservation_failed' => 'No tokens are available for the selected company.',
         ],
         'sections' => [
             'proof' => 'Proof',
@@ -257,6 +266,15 @@ return [
             'description' => 'Description',
             'metadata' => 'Metadata',
             'history' => 'History',
+            'template_name' => 'Template name',
+            'template_slug' => 'Template slug',
+            'template_description' => 'Template description',
+            'template_signature' => 'Signature requirement',
+            'template_required_files' => 'Required files',
+        ],
+        'template' => [
+            'signature_required' => 'Signature required',
+            'no_signature_required' => 'No signature required',
         ],
     ],
 ];

@@ -9,6 +9,8 @@ It opens a Filament action modal and builds the payload through the shared `proo
 - caches the proof template catalog for 10 minutes per connected company
 - generates custom fields dynamically from the selected template schema
 - shows or hides template-sensitive fields such as folders, categories, share emails, tags, and signature
+- hides folder and category selects when the API returns no usable options
+- reserves a token automatically before the proof initialization request
 - submits the proof initialization request through the SDK
 - uploads files and optional signature payloads after initialization
 
@@ -27,6 +29,13 @@ The following schema flags are used to shape the form:
 - `signature`
 - `customFields`
 - `requiredFiles`
+
+The widget also consumes the following API collections when they are available:
+
+- `GET /api/v1/categories?per_page=200&include_shared=true`
+- `GET /api/v1/folders?per_page=200&accessible_by=write`
+
+When either collection is empty, the related select is hidden.
 
 ## Custom fields
 
@@ -54,10 +63,11 @@ The cache key is scoped to the currently connected company and endpoint so separ
 
 1. open the dashboard proof deposit widget
 2. select a proof template
-3. fill in the template-specific fields
-4. upload the required files
-5. optionally paste a base64 signature when the template requires one
-6. submit the proof
+3. wait for the token reservation to be created automatically
+4. fill in the template-specific fields
+5. upload the required files
+6. optionally paste a base64 signature when the template requires one
+7. submit the proof
 
 ## Notes
 

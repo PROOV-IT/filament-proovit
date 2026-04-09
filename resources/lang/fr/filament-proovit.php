@@ -52,8 +52,16 @@ return [
             'name' => 'Nom',
             'status' => 'Statut',
             'description' => 'Description',
+            'view' => 'Voir',
             'empty' => 'Aucune preuve trouvée.',
             'no_description' => 'Aucune description',
+        ],
+        'tokens' => [
+            'heading' => 'Jetons disponibles',
+            'description' => 'Nombre de jetons disponibles pour la société ProovIT sélectionnée.',
+            'balance' => 'Jetons disponibles',
+            'company' => 'Société : :company',
+            'unknown_company' => 'Société non configurée',
         ],
     ],
 
@@ -103,6 +111,7 @@ return [
             'created_title' => 'Preuve créée',
             'created_body' => 'La preuve a été initialisée et ses fichiers ont été envoyés.',
             'failed_title' => 'Création de la preuve échouée',
+            'token_reservation_failed' => 'Aucun jeton n’est disponible pour la société sélectionnée.',
         ],
         'sections' => [
             'proof' => 'Preuve',
@@ -196,6 +205,15 @@ return [
             'description' => 'Description',
             'metadata' => 'Métadonnées',
             'history' => 'Historique',
+            'template_name' => 'Nom du modèle',
+            'template_slug' => 'Slug du modèle',
+            'template_description' => 'Description du modèle',
+            'template_signature' => 'Exigence de signature',
+            'template_required_files' => 'Fichiers requis',
+        ],
+        'template' => [
+            'signature_required' => 'Signature requise',
+            'no_signature_required' => 'Aucune signature requise',
         ],
     ],
 

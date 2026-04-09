@@ -4,45 +4,46 @@ declare(strict_types=1);
 
 namespace Proovit\FilamentProovit\Support\Filament\Widgets;
 
-use Filament\Widgets\Widget;
+use Filament\Widgets\StatsOverviewWidget;
+use Filament\Widgets\StatsOverviewWidget\Stat;
 use Proovit\LaravelProovit\ProovitClient;
+use Throwable;
 
-final class ConnectionStatusWidget extends Widget
+final class ConnectionStatusWidget extends StatsOverviewWidget
 {
-    protected string $view = 'filament-proovit::widgets.connection-status';
+    protected static ?int $sort = 1;
 
-    protected int|string|array $columnSpan = 'full';
-
-    protected function getViewData(): array
+    protected function getStats(): array
     {
-        $client = app(ProovitClient::class);
-        $context = $client->connection()->context();
-        $connection = $client->connection()->test();
+        try {
+            $client = app(ProovitClient::class);
+            $context = $client->connection()->context();
+            $connection = $client->connection()->test();
 
-        return [
-            'label' => __('filament-proovit::filament-proovit.navigation.label'),
-            'baseUrl' => $context->baseUrl,
-            'appUrl' => $context->appUrl,
-            'companyName' => $context->companyName,
-            'loginEmail' => $context->loginEmail,
-            'mode' => $context->mode->value,
-            'enabled' => (bool) config('proovit-filament.widgets.enabled', true),
-            'connected' => $connection->connected,
-            'selectedCompanyUuid' => $this->selectedCompanyUuidFrom($connection),
-            'features' => $context->features,
-        ];
+            return [
+                Stat::make(__('filament-proovit::filament-proovit.widgets.connection.company_name'), $context->companyName ?? __('filament-proovit::filament-proovit.widgets.connection.not_configured')),
+                Stat::make(__('filament-proovit::filament-proovit.widgets.connection.login_email'), $context->loginEmail ?? __('filament-proovit::filament-proovit.widgets.connection.not_configured')),
+                Stat::make(__('filament-proovit::filament-proovit.widgets.connection.base_url'), $context->baseUrl ?? __('filament-proovit::filament-proovit.widgets.connection.not_configured')),
+                Stat::make(__('filament-proovit::filament-proovit.widgets.connection.mode'), $context->mode->value)
+                    ->description($connection->connected ? __('filament-proovit::filament-proovit.widgets.connection.connected') : __('filament-proovit::filament-proovit.widgets.connection.not_configured')),
+            ];
+        } catch (Throwable) {
+            return [
+                Stat::make(__('filament-proovit::filament-proovit.widgets.connection.company_name'), __('filament-proovit::filament-proovit.widgets.connection.not_configured')),
+                Stat::make(__('filament-proovit::filament-proovit.widgets.connection.login_email'), __('filament-proovit::filament-proovit.widgets.connection.not_configured')),
+                Stat::make(__('filament-proovit::filament-proovit.widgets.connection.base_url'), __('filament-proovit::filament-proovit.widgets.connection.not_configured')),
+                Stat::make(__('filament-proovit::filament-proovit.widgets.connection.mode'), __('filament-proovit::filament-proovit.widgets.connection.unknown')),
+            ];
+        }
     }
 
-    private function selectedCompanyUuidFrom(object $connection): ?string
+    protected function getHeading(): ?string
     {
-        if (property_exists($connection, 'selectedCompanyUuid') && is_string($connection->selectedCompanyUuid) && $connection->selectedCompanyUuid !== '') {
-            return $connection->selectedCompanyUuid;
-        }
+        return __('filament-proovit::filament-proovit.widgets.connection.heading');
+    }
 
-        if (property_exists($connection, 'workspaceToken') && is_string($connection->workspaceToken) && $connection->workspaceToken !== '') {
-            return $connection->workspaceToken;
-        }
-
-        return null;
+    protected function getDescription(): ?string
+    {
+        return __('filament-proovit::filament-proovit.widgets.connection.description');
     }
 }

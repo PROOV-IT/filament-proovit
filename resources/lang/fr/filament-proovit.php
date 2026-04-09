@@ -30,6 +30,7 @@ return [
     'widgets' => [
         'connection' => [
             'heading' => 'Connexion ProovIT',
+            'description' => 'État actuel de l’endpoint, de la connexion et du rattachement de société.',
             'label' => 'Libellé',
             'company_name' => 'Société',
             'login_email' => 'Connexion',

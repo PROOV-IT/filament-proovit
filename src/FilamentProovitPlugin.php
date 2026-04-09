@@ -7,7 +7,6 @@ namespace Proovit\FilamentProovit;
 use Filament\Contracts\Plugin;
 use Filament\Panel;
 use Proovit\FilamentProovit\Pages\ProovitCertificates;
-use Proovit\FilamentProovit\Pages\ProovitOverview;
 use Proovit\FilamentProovit\Pages\ProovitProofs;
 use Proovit\FilamentProovit\Pages\ProovitProofView;
 use Proovit\FilamentProovit\Pages\ProovitSettings;
@@ -30,7 +29,6 @@ final class FilamentProovitPlugin implements Plugin
     {
         $panel
             ->pages([
-                ProovitOverview::class,
                 ProovitProofs::class,
                 ProovitCertificates::class,
                 ProovitProofView::class,

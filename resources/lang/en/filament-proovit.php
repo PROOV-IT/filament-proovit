@@ -30,6 +30,7 @@ return [
     'widgets' => [
         'connection' => [
             'heading' => 'ProovIT connection',
+            'description' => 'Current endpoint, login and company binding status.',
             'label' => 'Label',
             'company_name' => 'Company',
             'login_email' => 'Login',

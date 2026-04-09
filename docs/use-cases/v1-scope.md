@@ -6,9 +6,9 @@ integration status without duplicating business logic.
 
 ## Included in v1
 
-- ProovIT overview page
-- connection status widget
-- recent proofs widget
+- native Filament dashboard widgets
+- connection status stats widget
+- recent proofs table widget
 - panel navigation and registration
 
 ## Deferred to later versions

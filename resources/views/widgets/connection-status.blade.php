@@ -30,6 +30,11 @@
         </div>
 
         <div class="rounded-lg border border-gray-200 p-4 dark:border-gray-800">
+            <div class="text-xs uppercase tracking-wide text-gray-500">{{ __('filament-proovit::filament-proovit.widgets.connection.selected_company_uuid') }}</div>
+            <div class="mt-1 text-sm font-medium text-gray-950 dark:text-white">{{ $selectedCompanyUuid ?? __('filament-proovit::filament-proovit.widgets.connection.not_configured') }}</div>
+        </div>
+
+        <div class="rounded-lg border border-gray-200 p-4 dark:border-gray-800">
             <div class="text-xs uppercase tracking-wide text-gray-500">{{ __('filament-proovit::filament-proovit.widgets.connection.mode') }}</div>
             <div class="mt-1 text-sm font-medium text-gray-950 dark:text-white">{{ $mode ?? __('filament-proovit::filament-proovit.widgets.connection.unknown') }}</div>
         </div>

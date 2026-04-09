@@ -12,32 +12,32 @@ use Filament\Schemas\Schema;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
-use Proovit\FilamentProovit\Support\Filament\Tables\Proofs\ProofsTable;
+use Proovit\FilamentProovit\Support\Filament\Tables\Proofs\CertificatesTable;
 use Proovit\LaravelProovit\ProovitClient;
 
-final class ProovitProofs extends Page implements HasTable
+final class ProovitCertificates extends Page implements HasTable
 {
     use InteractsWithTable;
 
-    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-shield-check';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-document-check';
 
-    protected static ?string $slug = 'proovit/proofs';
+    protected static ?string $slug = 'proovit/certificates';
 
-    protected static ?int $navigationSort = 15;
+    protected static ?int $navigationSort = 20;
 
     public function getView(): string
     {
-        return 'filament-proovit::pages.proovit-proofs';
+        return 'filament-proovit::pages.proovit-certificates';
     }
 
     public function getTitle(): string
     {
-        return __('filament-proovit::filament-proovit.proofs.title');
+        return __('filament-proovit::filament-proovit.certificates.title');
     }
 
     public static function getNavigationLabel(): string
     {
-        return __('filament-proovit::filament-proovit.proofs.navigation');
+        return __('filament-proovit::filament-proovit.certificates.navigation');
     }
 
     public static function getNavigationGroup(): ?string
@@ -59,8 +59,8 @@ final class ProovitProofs extends Page implements HasTable
     {
         return $schema
             ->components([
-                Section::make(__('filament-proovit::filament-proovit.proofs.heading'))
-                    ->description(__('filament-proovit::filament-proovit.proofs.description')),
+                Section::make(__('filament-proovit::filament-proovit.certificates.heading'))
+                    ->description(__('filament-proovit::filament-proovit.certificates.description')),
                 EmbeddedTable::make(),
             ]);
     }
@@ -69,7 +69,7 @@ final class ProovitProofs extends Page implements HasTable
     {
         return [
             Action::make('refresh')
-                ->label(__('filament-proovit::filament-proovit.proofs.actions.refresh'))
+                ->label(__('filament-proovit::filament-proovit.certificates.actions.refresh'))
                 ->icon('heroicon-o-arrow-path')
                 ->action(function (): void {
                     $this->resetTable();
@@ -79,20 +79,20 @@ final class ProovitProofs extends Page implements HasTable
 
     public function table(Table $table): Table
     {
-        return ProofsTable::make(
+        return CertificatesTable::make(
             $table,
             fn (): array => $this->loadProofs(),
-            function (string $proofId): void {
-                $this->revokeProof($proofId);
-            },
             fn (string $proofId): string => ProovitProofView::getUrl(['proof' => $proofId]),
         );
     }
 
+    /**
+     * @return array<int, array<string, mixed>>
+     */
     protected function loadProofs(): array
     {
         $proofs = app(ProovitClient::class)->proofs()->list([
-            'limit' => 25,
+            'limit' => 50,
         ]);
 
         $rows = array_values((array) ($proofs['data'] ?? $proofs['items'] ?? $proofs['proofs'] ?? []));
@@ -112,15 +112,5 @@ final class ProovitProofs extends Page implements HasTable
             $rows,
             array_keys($rows)
         );
-    }
-
-    protected function revokeProof(string $proofId): void
-    {
-        if ($proofId === '') {
-            return;
-        }
-
-        app(ProovitClient::class)->proofs()->revoke($proofId);
-        $this->resetTable();
     }
 }

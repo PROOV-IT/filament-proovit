@@ -28,8 +28,21 @@ final class ConnectionStatusWidget extends Widget
             'mode' => $context->mode->value,
             'enabled' => (bool) config('proovit-filament.widgets.enabled', true),
             'connected' => $connection->connected,
-            'workspaceToken' => $connection->workspaceToken,
+            'selectedCompanyUuid' => $this->selectedCompanyUuidFrom($connection),
             'features' => $context->features,
         ];
+    }
+
+    private function selectedCompanyUuidFrom(object $connection): ?string
+    {
+        if (property_exists($connection, 'selectedCompanyUuid') && is_string($connection->selectedCompanyUuid) && $connection->selectedCompanyUuid !== '') {
+            return $connection->selectedCompanyUuid;
+        }
+
+        if (property_exists($connection, 'workspaceToken') && is_string($connection->workspaceToken) && $connection->workspaceToken !== '') {
+            return $connection->workspaceToken;
+        }
+
+        return null;
     }
 }

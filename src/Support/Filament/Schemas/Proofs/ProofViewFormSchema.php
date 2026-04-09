@@ -6,6 +6,7 @@ namespace Proovit\FilamentProovit\Support\Filament\Schemas\Proofs;
 
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Radio;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -20,9 +21,10 @@ final class ProofViewFormSchema
     /**
      * @return array<int, Component>
      */
-    public static function schema(?ProofTemplateData $template = null): array
+    public static function schema(?ProofTemplateData $template = null, array $files = []): array
     {
         $templateFieldComponents = $template === null ? [] : self::templateFieldComponents($template);
+        $fileComponents = $files === [] ? [] : self::fileComponents();
 
         return [
             Section::make(__('filament-proovit::filament-proovit.proof_view.sections.summary'))
@@ -85,6 +87,16 @@ final class ProofViewFormSchema
                 ->columns(2)
                 ->schema($templateFieldComponents)
                 ->visible($templateFieldComponents !== []),
+            Section::make(__('filament-proovit::filament-proovit.proof_view.sections.files'))
+                ->visible($fileComponents !== [])
+                ->schema([
+                    Repeater::make('files')
+                        ->label(__('filament-proovit::filament-proovit.proof_view.fields.files'))
+                        ->schema($fileComponents)
+                        ->columnSpanFull()
+                        ->disabled()
+                        ->dehydrated(false),
+                ]),
             Section::make(__('filament-proovit::filament-proovit.proof_view.sections.metadata'))
                 ->columns(2)
                 ->schema([
@@ -157,5 +169,41 @@ final class ProofViewFormSchema
                 ->disabled()
                 ->dehydrated(false),
         };
+    }
+
+    /**
+     * @return array<int, Component>
+     */
+    private static function fileComponents(): array
+    {
+        return [
+            TextInput::make('name')
+                ->label(__('filament-proovit::filament-proovit.proof_view.file_fields.name'))
+                ->disabled()
+                ->dehydrated(false),
+            TextInput::make('filename')
+                ->label(__('filament-proovit::filament-proovit.proof_view.file_fields.filename'))
+                ->disabled()
+                ->dehydrated(false),
+            TextInput::make('mime_type')
+                ->label(__('filament-proovit::filament-proovit.proof_view.file_fields.mime_type'))
+                ->disabled()
+                ->dehydrated(false),
+            TextInput::make('size')
+                ->label(__('filament-proovit::filament-proovit.proof_view.file_fields.size'))
+                ->disabled()
+                ->dehydrated(false),
+            TextInput::make('download_url')
+                ->label(__('filament-proovit::filament-proovit.proof_view.file_fields.download_url'))
+                ->disabled()
+                ->dehydrated(false)
+                ->columnSpanFull(),
+            Textarea::make('links')
+                ->label(__('filament-proovit::filament-proovit.proof_view.file_fields.links'))
+                ->disabled()
+                ->dehydrated(false)
+                ->rows(4)
+                ->columnSpanFull(),
+        ];
     }
 }

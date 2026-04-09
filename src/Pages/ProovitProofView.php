@@ -73,7 +73,7 @@ final class ProovitProofView extends Page
 
     public function form(Schema $schema): Schema
     {
-        return $schema->components(ProofViewFormSchema::schema($this->currentTemplate));
+        return $schema->components(ProofViewFormSchema::schema($this->currentTemplate, $this->data['files'] ?? []));
     }
 
     public function content(Schema $schema): Schema
@@ -180,7 +180,38 @@ final class ProovitProofView extends Page
             'template_fields' => $this->templateFieldsState($template, $metadata),
             'metadata' => $this->encodeJson($metadata),
             'history' => $this->encodeJson($history),
+            'files' => $this->proofFilesState($proof),
         ];
+    }
+
+    /**
+     * @return array<int, array<string, mixed>>
+     */
+    private function proofFilesState(ProofData $proof): array
+    {
+        return array_values(array_map(
+            function (array $file, int $index): array {
+                $links = (array) Arr::get($file, 'links', []);
+                $downloadUrl = (string) (
+                    $links['api_decrypt']
+                    ?? $links['signed']
+                    ?? Arr::get($file, 'download_url')
+                    ?? Arr::get($file, 'url')
+                    ?? ''
+                );
+
+                return [
+                    'name' => (string) ($file['name'] ?? $file['filename'] ?? sprintf('file-%d', $index + 1)),
+                    'filename' => (string) ($file['filename'] ?? $file['original_name'] ?? $file['name'] ?? ''),
+                    'mime_type' => (string) ($file['mime_type'] ?? $file['mimeType'] ?? ''),
+                    'size' => filled($file['size'] ?? null) ? (string) $file['size'] : '',
+                    'download_url' => $downloadUrl,
+                    'links' => $this->encodeJson($links),
+                ];
+            },
+            $proof->files,
+            array_keys($proof->files)
+        ));
     }
 
     private function templateFromProof(ProofData $proof): ?ProofTemplateData

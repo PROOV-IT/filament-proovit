@@ -5,6 +5,7 @@ return [
         'label' => 'ProovIT',
         'overview' => 'Overview',
         'proofs' => 'Proofs',
+        'proof_exports' => 'Proof exports',
         'certificates' => 'Certificates',
         'token_reservations' => 'Token reservations',
         'settings' => 'Settings',
@@ -180,6 +181,20 @@ return [
         ],
     ],
 
+    'proof_exports' => [
+        'title' => 'Proof exports',
+        'navigation' => 'Proof exports',
+        'heading' => 'Bulk export proofs',
+        'description' => 'Select one or more proofs to package their CSV metadata, certificates, and downloadable files into a ZIP archive.',
+        'actions' => [
+            'refresh' => 'Refresh',
+        ],
+        'empty' => [
+            'heading' => 'No proofs available for export',
+            'description' => 'The export table uses the current ProovIT connection and can be refreshed at any time.',
+        ],
+    ],
+
     'token_reservations' => [
         'title' => 'Token reservations',
         'navigation' => 'Token reservations',
@@ -322,6 +337,7 @@ return [
         ],
         'sections' => [
             'summary' => 'Summary',
+            'files' => 'Files',
             'metadata' => 'Metadata and history',
         ],
         'fields' => [
@@ -339,6 +355,15 @@ return [
             'template_description' => 'Template description',
             'template_signature' => 'Signature requirement',
             'template_required_files' => 'Required files',
+            'files' => 'Files',
+        ],
+        'file_fields' => [
+            'name' => 'Name',
+            'filename' => 'Filename',
+            'mime_type' => 'MIME type',
+            'size' => 'Size',
+            'download_url' => 'Download URL',
+            'links' => 'Links',
         ],
         'template' => [
             'signature_required' => 'Signature required',

@@ -6,6 +6,7 @@ return [
         'overview' => 'Vue générale',
         'certificates' => 'Certificats',
         'proofs' => 'Preuves',
+        'proof_exports' => 'Exports de preuves',
         'settings' => 'Configuration',
         'token_reservations' => 'Réservations de jetons',
     ],
@@ -116,6 +117,20 @@ return [
         'empty' => [
             'heading' => 'Aucune preuve trouvée',
             'description' => 'Crée ou importe une preuve dans ProovIT pour suivre son cycle de vie ici.',
+        ],
+    ],
+
+    'proof_exports' => [
+        'title' => 'Exports de preuves',
+        'navigation' => 'Exports de preuves',
+        'heading' => 'Export massif des preuves',
+        'description' => 'Sélectionne une ou plusieurs preuves pour regrouper leurs métadonnées CSV, certificats et fichiers téléchargeables dans une archive ZIP.',
+        'actions' => [
+            'refresh' => 'Rafraîchir',
+        ],
+        'empty' => [
+            'heading' => 'Aucune preuve disponible pour l’export',
+            'description' => 'La table d’export utilise la connexion ProovIT actuelle et peut être rafraîchie à tout moment.',
         ],
     ],
 
@@ -261,6 +276,7 @@ return [
         ],
         'sections' => [
             'summary' => 'Résumé',
+            'files' => 'Fichiers',
             'metadata' => 'Métadonnées et historique',
         ],
         'fields' => [
@@ -278,6 +294,15 @@ return [
             'template_description' => 'Description du modèle',
             'template_signature' => 'Exigence de signature',
             'template_required_files' => 'Fichiers requis',
+            'files' => 'Fichiers',
+        ],
+        'file_fields' => [
+            'name' => 'Nom',
+            'filename' => 'Nom de fichier',
+            'mime_type' => 'Type MIME',
+            'size' => 'Taille',
+            'download_url' => 'URL de téléchargement',
+            'links' => 'Liens',
         ],
         'template' => [
             'signature_required' => 'Signature requise',

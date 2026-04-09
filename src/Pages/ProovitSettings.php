@@ -88,69 +88,75 @@ final class ProovitSettings extends Page
             ]);
     }
 
-    protected function getHeaderActions(): array
-    {
-        return [
-            Action::make('authenticate')
-                ->label(__('filament-proovit::filament-proovit.settings.actions.authenticate'))
-                ->icon('heroicon-o-key')
-                ->form([
-                    TextInput::make('email')
-                        ->label(__('filament-proovit::filament-proovit.settings.fields.login_email'))
-                        ->email()
-                        ->required()
-                        ->default($this->currentAuthenticationEmail())
-                        ->autocomplete('email')
-                        ->maxLength(255),
-                    TextInput::make('password')
-                        ->label(__('filament-proovit::filament-proovit.settings.fields.password'))
-                        ->password()
-                        ->revealable()
-                        ->required()
-                        ->autocomplete('current-password')
-                        ->maxLength(255),
-                ])
-                ->action(function (array $data): void {
-                    try {
-                        $connection = $this->authenticate(
-                            (string) ($data['email'] ?? $this->currentAuthenticationEmail()),
-                            (string) ($data['password'] ?? ''),
-                        );
-                        $this->persistConnection($connection, false);
-
-                        Notification::make()
-                            ->title(__('filament-proovit::filament-proovit.settings.notifications.authenticated_title'))
-                            ->body(__('filament-proovit::filament-proovit.settings.notifications.authenticated_body'))
-                            ->success()
-                            ->send();
-                    } catch (Throwable $exception) {
-                        Notification::make()
-                            ->title(__('filament-proovit::filament-proovit.settings.notifications.authenticate_failed_title'))
-                            ->body($exception->getMessage())
-                            ->danger()
-                            ->send();
-                    }
-                }),
-            Action::make('reload')
-                ->label(__('filament-proovit::filament-proovit.settings.actions.reload'))
-                ->icon('heroicon-o-arrow-path')
-                ->action(function (): void {
-                    $this->form->fill(array_replace_recursive(
-                        app(ProovitConfig::class)->toArray(),
-                        app(ProovitSettingsRepository::class)->all(),
-                    ));
-                }),
-        ];
-    }
-
     /**
      * @return array<Action>
      */
     protected function getFormActions(): array
     {
         return [
+            $this->authenticateFormAction(),
+            $this->reloadFormAction(),
             $this->getSaveFormAction(),
         ];
+    }
+
+    private function authenticateFormAction(): Action
+    {
+        return Action::make('authenticate')
+            ->label(__('filament-proovit::filament-proovit.settings.actions.authenticate'))
+            ->icon('heroicon-o-key')
+            ->color('gray')
+            ->form([
+                TextInput::make('email')
+                    ->label(__('filament-proovit::filament-proovit.settings.fields.login_email'))
+                    ->email()
+                    ->required()
+                    ->default($this->currentAuthenticationEmail())
+                    ->autocomplete('email')
+                    ->maxLength(255),
+                TextInput::make('password')
+                    ->label(__('filament-proovit::filament-proovit.settings.fields.password'))
+                    ->password()
+                    ->revealable()
+                    ->required()
+                    ->autocomplete('current-password')
+                    ->maxLength(255),
+            ])
+            ->action(function (array $data): void {
+                try {
+                    $connection = $this->authenticate(
+                        (string) ($data['email'] ?? $this->currentAuthenticationEmail()),
+                        (string) ($data['password'] ?? ''),
+                    );
+                    $this->persistConnection($connection, false);
+
+                    Notification::make()
+                        ->title(__('filament-proovit::filament-proovit.settings.notifications.authenticated_title'))
+                        ->body(__('filament-proovit::filament-proovit.settings.notifications.authenticated_body'))
+                        ->success()
+                        ->send();
+                } catch (Throwable $exception) {
+                    Notification::make()
+                        ->title(__('filament-proovit::filament-proovit.settings.notifications.authenticate_failed_title'))
+                        ->body($exception->getMessage())
+                        ->danger()
+                        ->send();
+                }
+            });
+    }
+
+    private function reloadFormAction(): Action
+    {
+        return Action::make('reload')
+            ->label(__('filament-proovit::filament-proovit.settings.actions.reload'))
+            ->icon('heroicon-o-arrow-path')
+            ->color('gray')
+            ->action(function (): void {
+                $this->form->fill(array_replace_recursive(
+                    app(ProovitConfig::class)->toArray(),
+                    app(ProovitSettingsRepository::class)->all(),
+                ));
+            });
     }
 
     protected function getSaveFormAction(): Action
@@ -363,5 +369,4 @@ final class ProovitSettings extends Page
 
         return (string) (app(ProovitConfig::class)->loginEmail ?? '');
     }
-
 }

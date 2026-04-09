@@ -138,6 +138,7 @@ final class ProovitSettings extends Page
             }
 
             $this->data = $this->payloadFromState();
+            $this->dispatch('refresh-page');
 
             Notification::make()
                 ->title(__('filament-proovit::filament-proovit.settings.notifications.authenticated_title'))

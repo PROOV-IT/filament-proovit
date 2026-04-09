@@ -39,6 +39,7 @@ It reads the current form state, then the plugin:
 - the canonical persisted key is `connection.selected_company_uuid`
 - `connection.workspace_token` is still written for backward compatibility
 - the saved settings are synchronized back into the page state after a successful test or save, without clearing the form
+- after a successful connection test, the page emits a refresh so the companies list updates immediately
 
 ## Recommended flow
 

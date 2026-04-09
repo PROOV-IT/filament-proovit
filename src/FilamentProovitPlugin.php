@@ -14,7 +14,7 @@ final class FilamentProovitPlugin implements Plugin
 {
     public static function make(): self
     {
-        return new self();
+        return new self;
     }
 
     public function getId(): string

@@ -8,9 +8,12 @@ use Filament\Widgets\Widget;
 
 final class ConnectionStatusWidget extends Widget
 {
-    protected static string $view = 'filament-proovit::widgets.connection-status';
+    public function getView(): string
+    {
+        return 'filament-proovit::widgets.connection-status';
+    }
 
-    protected int | string | array $columnSpan = 'full';
+    protected int|string|array $columnSpan = 'full';
 
     protected function getViewData(): array
     {

@@ -8,7 +8,10 @@ use Filament\Widgets\Widget;
 
 final class RecentProofsWidget extends Widget
 {
-    protected static string $view = 'filament-proovit::widgets.recent-proofs';
+    public function getView(): string
+    {
+        return 'filament-proovit::widgets.recent-proofs';
+    }
 
-    protected int | string | array $columnSpan = 'full';
+    protected int|string|array $columnSpan = 'full';
 }

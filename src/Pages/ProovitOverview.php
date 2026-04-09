@@ -8,11 +8,14 @@ use Filament\Pages\Page;
 
 final class ProovitOverview extends Page
 {
-    protected static string $view = 'filament-proovit::pages.proovit-overview';
+    public function getView(): string
+    {
+        return 'filament-proovit::pages.proovit-overview';
+    }
 
-    protected static ?string $navigationIcon = 'heroicon-o-shield-check';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-shield-check';
 
-    protected static ?string $navigationGroup = 'ProovIT';
+    protected static string|\UnitEnum|null $navigationGroup = 'ProovIT';
 
     protected static ?string $title = 'ProovIT Overview';
 

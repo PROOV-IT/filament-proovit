@@ -16,11 +16,10 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Exceptions\Halt;
 use Proovit\FilamentProovit\Support\Filament\Schemas\ProovitSettingsFormSchema;
+use Proovit\LaravelProovit\Actions\Connection\AuthenticateProovitConnectionAction;
 use Proovit\LaravelProovit\Config\ProovitConfig;
 use Proovit\LaravelProovit\DTOs\ProovitConnectionData;
-use Proovit\LaravelProovit\Http\ProovitApiClient;
 use Proovit\LaravelProovit\ProovitClient;
-use Proovit\LaravelProovit\Support\ProovitClientFactory;
 use Proovit\LaravelProovit\Support\ProovitConfigResolver;
 use Proovit\LaravelProovit\Support\ProovitFeatureManager;
 use Proovit\LaravelProovit\Support\ProovitSettingsRepository;
@@ -233,65 +232,12 @@ final class ProovitSettings extends Page
     private function authenticate(string $email, string $password): ProovitConnectionData
     {
         $currentConfig = app(ProovitConfig::class);
-        $state = $this->form->getState();
+        $loginEmail = $email !== '' ? $email : (string) ($currentConfig->loginEmail ?? '');
 
-        $configPayload = array_replace_recursive(app(ProovitSettingsRepository::class)->all(), $currentConfig->toArray(), [
-            'connection' => [
-                'base_url' => $state['connection']['base_url'] ?? $currentConfig->baseUrl,
-                'login_email' => $email !== '' ? $email : ($state['connection']['login_email'] ?? $currentConfig->loginEmail),
-            ],
-        ]);
-
-        $temporaryConfig = ProovitConfig::fromArray($configPayload);
-
-        $factory = app(ProovitClientFactory::class);
-        $loginClient = new ProovitApiClient($factory->make($temporaryConfig));
-        $loginPayload = $loginClient->request('POST', '/v1/auth/login', [
-            'json' => [
-                'email' => (string) ($temporaryConfig->loginEmail ?? $email),
-                'password' => $password,
-            ],
-        ]);
-
-        $token = (string) ($loginPayload['token'] ?? $loginPayload['data']['token'] ?? '');
-        $authenticatedConfig = new ProovitConfig(
-            baseUrl: $temporaryConfig->baseUrl,
-            appUrl: $temporaryConfig->appUrl,
-            apiKey: $temporaryConfig->apiKey,
-            accessToken: $token,
-            workspaceToken: $temporaryConfig->workspaceToken,
-            companyName: $temporaryConfig->companyName,
-            loginEmail: $temporaryConfig->loginEmail,
-            mode: $temporaryConfig->mode,
-            timeout: $temporaryConfig->timeout,
-            connectTimeout: $temporaryConfig->connectTimeout,
-            verifyTls: $temporaryConfig->verifyTls,
-            retryAttempts: $temporaryConfig->retryAttempts,
-            retrySleepMs: $temporaryConfig->retrySleepMs,
-            healthEndpoint: $temporaryConfig->healthEndpoint,
-            api: $temporaryConfig->api,
-            features: $temporaryConfig->features,
-            certificates: $temporaryConfig->certificates,
-            exports: $temporaryConfig->exports,
-            audit: $temporaryConfig->audit,
-            docs: $temporaryConfig->docs,
+        return app(AuthenticateProovitConnectionAction::class)->handle(
+            $loginEmail,
+            $password,
         );
-
-        $companiesClient = new ProovitApiClient($factory->make($authenticatedConfig));
-        $companiesPayload = $companiesClient->request('GET', '/v1/companies');
-
-        return ProovitConnectionData::fromArray([
-            'connected' => true,
-            'mode' => $temporaryConfig->mode->value,
-            'base_url' => $temporaryConfig->baseUrl,
-            'bearer_token' => $token,
-            'selected_company_uuid' => null,
-            'workspace_token' => null,
-            'company_name' => null,
-            'login_email' => $temporaryConfig->loginEmail ?? $email,
-            'companies' => array_values((array) ($companiesPayload['data'] ?? $companiesPayload['items'] ?? $companiesPayload['companies'] ?? $companiesPayload)),
-            'payload' => $loginPayload,
-        ]);
     }
 
     private function persistConnection(ProovitConnectionData $connection, bool $preserveSelectedCompany = true): void

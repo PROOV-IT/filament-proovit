@@ -27,6 +27,7 @@ composer require proovit/filament-proovit
 - [Configuration](docs/configuration.md)
 - [Use cases](docs/use-cases/)
 - [Settings page](docs/use-cases/settings-page.md)
+- [Proofs page](docs/use-cases/proofs-page.md)
 - [Release notes](docs/release-notes.md)
 - [V1 scope](docs/use-cases/v1-scope.md)
 

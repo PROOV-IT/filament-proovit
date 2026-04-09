@@ -9,10 +9,7 @@ use Proovit\LaravelProovit\ProovitClient;
 
 final class ConnectionStatusWidget extends Widget
 {
-    public function getView(): string
-    {
-        return 'filament-proovit::widgets.connection-status';
-    }
+    protected string $view = 'filament-proovit::widgets.connection-status';
 
     protected int|string|array $columnSpan = 'full';
 

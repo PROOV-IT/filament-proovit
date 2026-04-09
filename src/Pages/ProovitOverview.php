@@ -73,7 +73,9 @@ final class ProovitOverview extends Page
             Action::make('refresh')
                 ->label(__('filament-proovit::filament-proovit.overview.actions.refresh'))
                 ->icon('heroicon-o-arrow-path')
-                ->action(fn (): void => $this->dispatch('$refresh')),
+                ->action(function (): void {
+                    $this->dispatch('$refresh');
+                }),
         ];
     }
 

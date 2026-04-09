@@ -4,6 +4,7 @@ return [
     'navigation' => [
         'label' => 'ProovIT',
         'overview' => 'Overview',
+        'proofs' => 'Proofs',
         'settings' => 'Settings',
     ],
 
@@ -122,6 +123,42 @@ return [
             'audit_channel' => 'Audit channel',
             'docs_enabled' => 'Docs enabled',
             'docs_path' => 'Docs path',
+        ],
+    ],
+
+    'proofs' => [
+        'title' => 'ProovIT proofs',
+        'navigation' => 'Proofs',
+        'heading' => 'Proof lifecycle',
+        'description' => 'Review recent proofs, open their certificates, and revoke them when your legal process allows it.',
+        'actions' => [
+            'refresh' => 'Refresh',
+            'open_certificate' => 'Open certificate',
+            'revoke' => 'Revoke',
+        ],
+        'notifications' => [
+            'revoked_title' => 'Proof revoked',
+            'revoked_body' => 'The selected proof has been revoked in ProovIT.',
+        ],
+        'columns' => [
+            'name' => 'Name',
+            'status' => 'Status',
+            'signed_at' => 'Signed at',
+            'description' => 'Description',
+            'certificate' => 'Certificate',
+        ],
+        'status' => [
+            'unknown' => 'Unknown',
+        ],
+        'placeholders' => [
+            'untitled' => 'Untitled proof',
+            'no_description' => 'No description',
+            'not_signed' => 'Not signed yet',
+            'not_available' => 'Not available',
+        ],
+        'empty' => [
+            'heading' => 'No proofs found',
+            'description' => 'Create or import a proof in ProovIT to start monitoring its lifecycle here.',
         ],
     ],
 ];

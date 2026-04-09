@@ -86,7 +86,9 @@ final class ProovitSettings extends Page
             Action::make('reload')
                 ->label(__('filament-proovit::filament-proovit.settings.actions.reload'))
                 ->icon('heroicon-o-arrow-path')
-                ->action(fn (): void => $this->form->fill(app(ProovitConfig::class)->toArray())),
+                ->action(function (): void {
+                    $this->form->fill(app(ProovitConfig::class)->toArray());
+                }),
         ];
     }
 

@@ -53,6 +53,42 @@ return [
         ],
     ],
 
+    'proofs' => [
+        'title' => 'Preuves ProovIT',
+        'navigation' => 'Preuves',
+        'heading' => 'Cycle de vie des preuves',
+        'description' => 'Consulte les preuves récentes, ouvre leurs certificats et révoque-les lorsque ton processus légal le permet.',
+        'actions' => [
+            'refresh' => 'Rafraîchir',
+            'open_certificate' => 'Ouvrir le certificat',
+            'revoke' => 'Révoquer',
+        ],
+        'notifications' => [
+            'revoked_title' => 'Preuve révoquée',
+            'revoked_body' => 'La preuve sélectionnée a été révoquée dans ProovIT.',
+        ],
+        'columns' => [
+            'name' => 'Nom',
+            'status' => 'Statut',
+            'signed_at' => 'Signée le',
+            'description' => 'Description',
+            'certificate' => 'Certificat',
+        ],
+        'status' => [
+            'unknown' => 'Inconnu',
+        ],
+        'placeholders' => [
+            'untitled' => 'Preuve sans titre',
+            'no_description' => 'Aucune description',
+            'not_signed' => 'Pas encore signée',
+            'not_available' => 'Non disponible',
+        ],
+        'empty' => [
+            'heading' => 'Aucune preuve trouvée',
+            'description' => 'Crée ou importe une preuve dans ProovIT pour suivre son cycle de vie ici.',
+        ],
+    ],
+
     'settings' => [
         'title' => 'Configuration ProovIT',
         'navigation' => 'Configuration',

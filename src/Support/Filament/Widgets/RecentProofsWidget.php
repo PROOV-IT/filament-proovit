@@ -9,10 +9,7 @@ use Proovit\LaravelProovit\ProovitClient;
 
 final class RecentProofsWidget extends Widget
 {
-    public function getView(): string
-    {
-        return 'filament-proovit::widgets.recent-proofs';
-    }
+    protected string $view = 'filament-proovit::widgets.recent-proofs';
 
     protected int|string|array $columnSpan = 'full';
 

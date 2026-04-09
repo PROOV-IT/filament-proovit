@@ -60,10 +60,10 @@ final class ProovitSettings extends Page
 
     public function mount(): void
     {
-        $this->form->fill(array_replace_recursive(
+        $this->data = array_replace_recursive(
             app(ProovitConfig::class)->toArray(),
             app(ProovitSettingsRepository::class)->all(),
-        ));
+        );
     }
 
     public function defaultForm(Schema $schema): Schema
@@ -152,10 +152,10 @@ final class ProovitSettings extends Page
             ->icon('heroicon-o-arrow-path')
             ->color('gray')
             ->action(function (): void {
-                $this->form->fill(array_replace_recursive(
+                $this->data = array_replace_recursive(
                     app(ProovitConfig::class)->toArray(),
                     app(ProovitSettingsRepository::class)->all(),
-                ));
+                );
             });
     }
 
@@ -170,7 +170,7 @@ final class ProovitSettings extends Page
     public function save(): void
     {
         try {
-            $state = $this->form->getState();
+            $state = $this->data;
             $settings = app(ProovitSettingsRepository::class);
             $payload = array_replace_recursive(
                 app(ProovitSettingsRepository::class)->all(),
@@ -194,10 +194,10 @@ final class ProovitSettings extends Page
             app()->forgetInstance(ProovitClient::class);
             app()->forgetInstance(ProovitFeatureManager::class);
 
-            $this->form->fill(array_replace_recursive(
+            $this->data = array_replace_recursive(
                 app(ProovitConfig::class)->toArray(),
                 app(ProovitSettingsRepository::class)->all(),
-            ));
+            );
 
             Notification::make()
                 ->title(__('filament-proovit::filament-proovit.settings.notifications.saved_title'))
@@ -362,7 +362,7 @@ final class ProovitSettings extends Page
 
     private function currentAuthenticationEmail(): string
     {
-        $stateEmail = (string) data_get($this->form->getState(), 'connection.login_email', '');
+        $stateEmail = (string) data_get($this->data, 'connection.login_email', '');
         if ($stateEmail !== '') {
             return $stateEmail;
         }

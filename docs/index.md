@@ -7,4 +7,5 @@ This package provides Filament-native screens and widgets for the ProovIT integr
 - [Install](install.md)
 - [Configuration](configuration.md)
 - [Use cases](use-cases/)
+- [Settings page](use-cases/settings-page.md)
 - [Release notes](release-notes.md)

@@ -7,6 +7,7 @@ namespace Proovit\FilamentProovit;
 use Filament\Contracts\Plugin;
 use Filament\Panel;
 use Proovit\FilamentProovit\Pages\ProovitOverview;
+use Proovit\FilamentProovit\Pages\ProovitSettings;
 use Proovit\FilamentProovit\Support\Filament\Widgets\ConnectionStatusWidget;
 use Proovit\FilamentProovit\Support\Filament\Widgets\RecentProofsWidget;
 
@@ -27,6 +28,7 @@ final class FilamentProovitPlugin implements Plugin
         $panel
             ->pages([
                 ProovitOverview::class,
+                ProovitSettings::class,
             ])
             ->widgets([
                 ConnectionStatusWidget::class,

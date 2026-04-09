@@ -6,6 +6,7 @@ return [
         'overview' => 'Overview',
         'proofs' => 'Proofs',
         'certificates' => 'Certificates',
+        'token_reservations' => 'Token reservations',
         'settings' => 'Settings',
     ],
 
@@ -176,6 +177,46 @@ return [
         'empty' => [
             'heading' => 'No proofs found',
             'description' => 'Create or import a proof in ProovIT to start monitoring its lifecycle here.',
+        ],
+    ],
+
+    'token_reservations' => [
+        'title' => 'Token reservations',
+        'navigation' => 'Token reservations',
+        'heading' => 'Recent token reservations',
+        'description' => 'Review the local reservation history created by the SDK token flow.',
+        'actions' => [
+            'refresh' => 'Refresh',
+        ],
+        'columns' => [
+            'fingerprint' => 'Fingerprint',
+            'reservation_id' => 'Reservation ID',
+            'status' => 'Status',
+            'created_at' => 'Created at',
+        ],
+        'fields' => [
+            'fingerprint' => 'Fingerprint',
+            'reservation_id' => 'Reservation ID',
+            'status' => 'Status',
+            'created_at' => 'Created at',
+            'response' => 'API response',
+        ],
+        'sections' => [
+            'summary' => 'Summary',
+            'payload' => 'Payload',
+        ],
+        'view' => [
+            'title' => 'Token reservation details',
+            'actions' => [
+                'refresh' => 'Refresh',
+            ],
+        ],
+        'placeholders' => [
+            'unknown' => 'Unknown',
+        ],
+        'empty' => [
+            'heading' => 'No token reservations found',
+            'description' => 'Token reservations created through the proof deposit flow will appear here.',
         ],
     ],
 

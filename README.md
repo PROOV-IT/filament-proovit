@@ -33,6 +33,7 @@ composer require proovit/filament-proovit
 - [Proof deposit](docs/use-cases/proof-deposit.md)
 - [Reusable actions](docs/use-cases/actions.md)
 - [Proof export](docs/use-cases/proof-export.md)
+- [Token reservations](docs/use-cases/token-reservations.md)
 - [Proofs page](docs/use-cases/proofs-page.md)
 - [Proof detail page](docs/use-cases/proof-view-page.md)
 - [Release notes](docs/release-notes.md)

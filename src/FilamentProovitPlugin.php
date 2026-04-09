@@ -10,6 +10,8 @@ use Proovit\FilamentProovit\Pages\ProovitCertificates;
 use Proovit\FilamentProovit\Pages\ProovitProofs;
 use Proovit\FilamentProovit\Pages\ProovitProofView;
 use Proovit\FilamentProovit\Pages\ProovitSettings;
+use Proovit\FilamentProovit\Pages\ProovitTokenReservations;
+use Proovit\FilamentProovit\Pages\ProovitTokenReservationView;
 use Proovit\FilamentProovit\Support\Filament\Widgets\ConnectionStatusWidget;
 use Proovit\FilamentProovit\Support\Filament\Widgets\ProofDepositWidget;
 use Proovit\FilamentProovit\Support\Filament\Widgets\RecentProofsWidget;
@@ -34,6 +36,8 @@ final class FilamentProovitPlugin implements Plugin
                 ProovitProofs::class,
                 ProovitCertificates::class,
                 ProovitProofView::class,
+                ProovitTokenReservations::class,
+                ProovitTokenReservationView::class,
                 ProovitSettings::class,
             ])
             ->widgets([

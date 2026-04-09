@@ -7,6 +7,7 @@ return [
         'certificates' => 'Certificats',
         'proofs' => 'Preuves',
         'settings' => 'Configuration',
+        'token_reservations' => 'Réservations de jetons',
     ],
 
     'overview' => [
@@ -115,6 +116,46 @@ return [
         'empty' => [
             'heading' => 'Aucune preuve trouvée',
             'description' => 'Crée ou importe une preuve dans ProovIT pour suivre son cycle de vie ici.',
+        ],
+    ],
+
+    'token_reservations' => [
+        'title' => 'Réservations de jetons',
+        'navigation' => 'Réservations de jetons',
+        'heading' => 'Historique des réservations de jetons',
+        'description' => 'Consulte l’historique local des réservations générées par le flux de dépôt de preuve.',
+        'actions' => [
+            'refresh' => 'Rafraîchir',
+        ],
+        'columns' => [
+            'fingerprint' => 'Empreinte',
+            'reservation_id' => 'ID de réservation',
+            'status' => 'Statut',
+            'created_at' => 'Créée le',
+        ],
+        'fields' => [
+            'fingerprint' => 'Empreinte',
+            'reservation_id' => 'ID de réservation',
+            'status' => 'Statut',
+            'created_at' => 'Créée le',
+            'response' => 'Réponse API',
+        ],
+        'sections' => [
+            'summary' => 'Résumé',
+            'payload' => 'Données',
+        ],
+        'view' => [
+            'title' => 'Détail de la réservation',
+            'actions' => [
+                'refresh' => 'Rafraîchir',
+            ],
+        ],
+        'placeholders' => [
+            'unknown' => 'Inconnu',
+        ],
+        'empty' => [
+            'heading' => 'Aucune réservation de jeton trouvée',
+            'description' => 'Les réservations créées via le flux de dépôt de preuve apparaîtront ici.',
         ],
     ],
 

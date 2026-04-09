@@ -132,6 +132,7 @@ return [
         'heading' => 'Proof lifecycle',
         'description' => 'Review recent proofs, open their certificates, and revoke them when your legal process allows it.',
         'actions' => [
+            'create' => 'Create proof',
             'refresh' => 'Refresh',
             'view' => 'View',
             'open_certificate' => 'Open certificate',
@@ -192,7 +193,6 @@ return [
             'description' => 'Description',
             'folder_id' => 'Folder UUID',
             'category_id' => 'Category UUID',
-            'token_reservation_id' => 'Token reservation UUID',
             'proof_template_id' => 'Proof template UUID',
             'share_emails' => 'Share emails',
             'keywords' => 'Keywords',

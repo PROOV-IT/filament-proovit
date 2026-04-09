@@ -6,6 +6,7 @@ The `ProovIT` plugin ships with a native Filament page dedicated to proofs.
 
 - recent proofs fetched from the connected ProovIT workspace
 - proof status, signed timestamp, description, and certificate link
+- a header action to create a new proof with the native deposit modal
 - a detail action that opens a dedicated proof view page
 - quick actions to open a certificate or revoke a proof when allowed by your workflow
 
@@ -40,4 +41,5 @@ public function panel(Panel $panel): Panel
 
 - the page is intentionally lightweight and Filament-native
 - the current release focuses on browsing proofs and certificate actions
+- the create action reuses the same proof deposit modal as the dashboard widget
 - the proof detail page and the certificates page reuse the same SDK data source

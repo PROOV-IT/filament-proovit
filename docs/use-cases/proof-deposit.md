@@ -1,7 +1,7 @@
 # Proof deposit
 
-The plugin ships with a native proof deposit widget on the dashboard.
-It opens a Filament action modal and builds the payload through the shared `proovit/laravel-proovit` proof builder.
+The plugin ships with a native proof deposit widget on the dashboard and a matching create action on the proofs page.
+Both open the same Filament action modal and build the payload through the shared `proovit/laravel-proovit` proof builder.
 
 ## What it does
 

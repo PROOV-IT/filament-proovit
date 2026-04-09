@@ -12,6 +12,7 @@ use Filament\Schemas\Schema;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
+use Proovit\FilamentProovit\Support\Filament\Actions\Proofs\DepositProofAction;
 use Proovit\FilamentProovit\Support\Filament\Tables\Proofs\ProofsTable;
 use Proovit\LaravelProovit\ProovitClient;
 
@@ -68,6 +69,9 @@ final class ProovitProofs extends Page implements HasTable
     protected function getHeaderActions(): array
     {
         return [
+            DepositProofAction::make()
+                ->label(__('filament-proovit::filament-proovit.proofs.actions.create'))
+                ->icon('heroicon-o-plus'),
             Action::make('refresh')
                 ->label(__('filament-proovit::filament-proovit.proofs.actions.refresh'))
                 ->icon('heroicon-o-arrow-path')

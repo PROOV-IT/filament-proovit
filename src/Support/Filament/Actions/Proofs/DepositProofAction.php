@@ -6,7 +6,6 @@ namespace Proovit\FilamentProovit\Support\Filament\Actions\Proofs;
 
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
-use Filament\Widgets\TableWidget;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
 use Proovit\FilamentProovit\Support\Filament\Schemas\Proofs\ProofDepositActionSchema;
@@ -29,7 +28,7 @@ final class DepositProofAction
             ->color('primary')
             ->schema(ProofDepositActionSchema::schema())
             ->modalWidth('7xl')
-            ->action(function (array $data, TableWidget $livewire): void {
+            ->action(function (array $data, mixed $livewire): void {
                 try {
                     $template = self::templateFromData($data);
                     $reservation = app(ProovitClient::class)->tokens()->reserve();
@@ -58,7 +57,9 @@ final class DepositProofAction
                         ->success()
                         ->send();
 
-                    $livewire->resetTable();
+                    if (is_object($livewire) && method_exists($livewire, 'resetTable')) {
+                        $livewire->resetTable();
+                    }
                 } catch (Throwable $exception) {
                     Notification::make()
                         ->title(__('filament-proovit::filament-proovit.proof_deposit.notifications.failed_title'))

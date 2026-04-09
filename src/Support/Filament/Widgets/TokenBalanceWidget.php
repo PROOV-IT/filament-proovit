@@ -6,7 +6,6 @@ namespace Proovit\FilamentProovit\Support\Filament\Widgets;
 
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
-use Proovit\FilamentProovit\Support\ProovitTokenBalanceCache;
 use Proovit\LaravelProovit\DTOs\TokenBalanceData;
 use Proovit\LaravelProovit\ProovitClient;
 
@@ -44,7 +43,7 @@ final class TokenBalanceWidget extends StatsOverviewWidget
     private function balance(): TokenBalanceData
     {
         try {
-            return app(ProovitTokenBalanceCache::class)->get();
+            return app(ProovitClient::class)->tokens()->balance();
         } catch (\Throwable) {
             return new TokenBalanceData(balance: 0);
         }

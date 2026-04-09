@@ -71,6 +71,7 @@ return [
         'heading' => 'Cycle de vie des preuves',
         'description' => 'Consulte les preuves récentes, ouvre leurs certificats et révoque-les lorsque ton processus légal le permet.',
         'actions' => [
+            'create' => 'Créer une preuve',
             'refresh' => 'Rafraîchir',
             'view' => 'Voir',
             'open_certificate' => 'Ouvrir le certificat',
@@ -131,7 +132,6 @@ return [
             'description' => 'Description',
             'folder_id' => 'UUID du dossier',
             'category_id' => 'UUID de la catégorie',
-            'token_reservation_id' => 'UUID de réservation de jeton',
             'proof_template_id' => 'UUID du modèle de preuve',
             'share_emails' => 'Emails de partage',
             'keywords' => 'Mots-clés',

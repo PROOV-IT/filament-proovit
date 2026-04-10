@@ -5,7 +5,6 @@
 - [Proof deposit](proof-deposit.md)
 - [Reusable actions](actions.md)
 - [Proof export](proof-export.md)
-- [Proof exports page](proof-exports-page.md)
 - [Token reservations](token-reservations.md)
 - [Proofs page](proofs-page.md)
 - [Certificates page](certificates-page.md)

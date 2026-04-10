@@ -13,6 +13,7 @@ use Proovit\FilamentProovit\Support\ProovitApiSessionGuard;
 use Proovit\LaravelProovit\DTOs\ProofData;
 use Proovit\LaravelProovit\ProovitClient;
 use RuntimeException;
+use Throwable;
 use ZipArchive;
 
 final class ExportProofsAction
@@ -83,10 +84,8 @@ final class ExportProofsAction
             $proofFolder = sprintf('proofs/%s', $proof->id);
 
             if (filled($proof->certificateUrl)) {
-                $certificate = app(ProovitApiSessionGuard::class)->withAutoRefresh(
-                    fn (): string => app(ProovitClient::class)->proofs()->downloadCertificate($proof->id),
-                );
-                if ($certificate !== '') {
+                $certificate = self::downloadCertificate($proof);
+                if ($certificate !== null && $certificate !== '') {
                     $zip->addFromString(sprintf('%s/certificate.pdf', $proofFolder), $certificate);
                 }
             }
@@ -201,7 +200,32 @@ final class ExportProofsAction
             return null;
         }
 
-        return self::downloadUrl($url);
+        try {
+            return self::downloadUrl($url);
+        } catch (Throwable $exception) {
+            logger()->warning('ProovIT proof file could not be exported.', [
+                'url' => $url,
+                'message' => $exception->getMessage(),
+            ]);
+
+            return null;
+        }
+    }
+
+    private static function downloadCertificate(ProofData $proof): ?string
+    {
+        try {
+            return app(ProovitApiSessionGuard::class)->withAutoRefresh(
+                fn (): string => app(ProovitClient::class)->proofs()->downloadCertificate($proof->id),
+            );
+        } catch (Throwable $exception) {
+            logger()->warning('ProovIT proof certificate could not be exported.', [
+                'proof_id' => $proof->id,
+                'message' => $exception->getMessage(),
+            ]);
+
+            return null;
+        }
     }
 
     /**

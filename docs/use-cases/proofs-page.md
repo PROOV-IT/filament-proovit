@@ -43,4 +43,5 @@ public function panel(Panel $panel): Panel
 - the page is intentionally lightweight and Filament-native
 - the current release focuses on browsing proofs and certificate actions
 - the create action reuses the same proof deposit modal as the dashboard widget
+- the bulk export action is documented separately in the proof export use case
 - the proof detail page and the certificates page reuse the same SDK data source

@@ -1,8 +1,6 @@
 # Proof export
 
-This page documents the underlying export workflow used by the bulk export action and the dedicated `Proof exports` page.
-
-The proofs page includes a bulk export action.
+This page documents the underlying export workflow used by the bulk export action on the proofs page.
 
 ## What it exports
 
@@ -14,7 +12,7 @@ The generated ZIP archive contains:
 
 ## Usage
 
-Select one or more proofs in the table on the `Proof exports` page, then trigger the export bulk action.
+Select one or more proofs in the table on the `Proofs` page, then trigger the export bulk action.
 
 The export is assembled server-side, so the user only receives a single ZIP file.
 

@@ -5,7 +5,6 @@ return [
         'label' => 'ProovIT',
         'overview' => 'Overview',
         'proofs' => 'Proofs',
-        'proof_exports' => 'Proof exports',
         'certificates' => 'Certificates',
         'token_reservations' => 'Token reservations',
         'settings' => 'Settings',
@@ -195,20 +194,6 @@ return [
         'empty' => [
             'heading' => 'No proofs found',
             'description' => 'Create or import a proof in ProovIT to start monitoring its lifecycle here.',
-        ],
-    ],
-
-    'proof_exports' => [
-        'title' => 'Proof exports',
-        'navigation' => 'Proof exports',
-        'heading' => 'Bulk export proofs',
-        'description' => 'Select one or more proofs to package their CSV metadata, certificates, and downloadable files into a ZIP archive.',
-        'actions' => [
-            'refresh' => 'Refresh',
-        ],
-        'empty' => [
-            'heading' => 'No proofs available for export',
-            'description' => 'The export table uses the current ProovIT connection and can be refreshed at any time.',
         ],
     ],
 

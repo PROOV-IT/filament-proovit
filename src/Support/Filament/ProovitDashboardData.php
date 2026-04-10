@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Proovit\FilamentProovit\Support\Filament;
 
+use Proovit\FilamentProovit\Support\ProovitApiSessionGuard;
 use Proovit\LaravelProovit\DTOs\ProofData;
 use Proovit\LaravelProovit\ProovitClient;
 
@@ -20,11 +21,13 @@ final readonly class ProovitDashboardData
 
     public static function fromClient(ProovitClient $client, int $limit = 5): self
     {
-        $context = $client->connection()->context();
-        $connection = $client->connection()->test();
-        $proofs = $client->proofs()->list([
+        $guard = app(ProovitApiSessionGuard::class);
+
+        $context = $guard->withAutoRefresh(fn () => $client->connection()->context());
+        $connection = $guard->withAutoRefresh(fn () => $client->connection()->test());
+        $proofs = $guard->withAutoRefresh(fn () => $client->proofs()->list([
             'limit' => $limit,
-        ]);
+        ]));
 
         $recentProofs = array_map(
             static fn (array $proof): ProofData => ProofData::fromArray($proof),

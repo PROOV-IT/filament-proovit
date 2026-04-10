@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Proovit\FilamentProovit\Support\Filament\Schemas;
 
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Component;
@@ -14,11 +15,32 @@ final class ProovitSettingsFormSchema
     /**
      * @param  array<int, array<string, mixed>>  $companies
      * @param  array<string, string>  $baseUrlOptions
+     * @param  array<string, string>  $connectionState
      * @return array<int, Component>
      */
-    public static function schema(array $companies = [], array $baseUrlOptions = []): array
+    public static function schema(array $companies = [], array $baseUrlOptions = [], array $connectionState = []): array
     {
         return [
+            Section::make(__('filament-proovit::filament-proovit.settings.sections.status'))
+                ->description(__('filament-proovit::filament-proovit.settings.sections.status_description'))
+                ->columns(3)
+                ->schema([
+                    Placeholder::make('connection_status')
+                        ->label(__('filament-proovit::filament-proovit.settings.fields.connection_status'))
+                        ->content((string) ($connectionState['status_label'] ?? __('filament-proovit::filament-proovit.settings.status.unknown')))
+                        ->badge()
+                        ->color((string) ($connectionState['status_color'] ?? 'gray')),
+                    Placeholder::make('bearer_status')
+                        ->label(__('filament-proovit::filament-proovit.settings.fields.bearer_status'))
+                        ->content((string) ($connectionState['bearer_label'] ?? __('filament-proovit::filament-proovit.settings.status.unknown')))
+                        ->badge()
+                        ->color((string) ($connectionState['bearer_color'] ?? 'gray')),
+                    Placeholder::make('company_status')
+                        ->label(__('filament-proovit::filament-proovit.settings.fields.company_status'))
+                        ->content((string) ($connectionState['company_label'] ?? __('filament-proovit::filament-proovit.settings.status.unknown')))
+                        ->badge()
+                        ->color((string) ($connectionState['company_color'] ?? 'gray')),
+                ]),
             Section::make(__('filament-proovit::filament-proovit.settings.sections.connection'))
                 ->description(__('filament-proovit::filament-proovit.settings.sections.connection_description'))
                 ->columns(2)

@@ -9,6 +9,7 @@ use Filament\Notifications\Notification;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
 use Proovit\FilamentProovit\Support\Filament\Schemas\Proofs\ProofDepositActionSchema;
+use Proovit\FilamentProovit\Support\ProovitApiSessionGuard;
 use Proovit\FilamentProovit\Support\ProovitProofTemplateCatalog;
 use Proovit\LaravelProovit\Builders\Proofs\ProofBuilder;
 use Proovit\LaravelProovit\Builders\Proofs\ProofFilesBuilder;
@@ -31,7 +32,9 @@ final class DepositProofAction
             ->action(function (array $data, mixed $livewire): void {
                 try {
                     $template = self::templateFromData($data);
-                    $reservation = app(ProovitClient::class)->tokens()->reserve();
+                    $guard = app(ProovitApiSessionGuard::class);
+                    $client = app(ProovitClient::class);
+                    $reservation = $guard->withAutoRefresh(fn () => $client->tokens()->reserve());
                     $reservationId = (string) ($reservation->reservationId ?? '');
 
                     if ($reservationId === '') {
@@ -40,15 +43,14 @@ final class DepositProofAction
 
                     $proofBuilder = self::buildProofBuilder($data, $template);
                     $proofBuilder->withTokenReservationId($reservationId);
-                    $client = app(ProovitClient::class);
-                    $proof = $client->proofs()->init($proofBuilder);
+                    $proof = $guard->withAutoRefresh(fn () => $client->proofs()->init($proofBuilder));
 
                     if ($proofBuilder->hasFiles()) {
-                        $client->proofs()->uploadFiles($proof->id, $proofBuilder);
+                        $guard->withAutoRefresh(fn () => $client->proofs()->uploadFiles($proof->id, $proofBuilder));
                     }
 
                     if ($proofBuilder->hasSignature()) {
-                        $client->proofs()->sign($proof->id, $proofBuilder);
+                        $guard->withAutoRefresh(fn () => $client->proofs()->sign($proof->id, $proofBuilder));
                     }
 
                     Notification::make()

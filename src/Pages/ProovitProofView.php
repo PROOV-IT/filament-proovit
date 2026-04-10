@@ -15,6 +15,7 @@ use Filament\Schemas\Schema;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Proovit\FilamentProovit\Support\Filament\Schemas\Proofs\ProofViewFormSchema;
+use Proovit\FilamentProovit\Support\ProovitApiSessionGuard;
 use Proovit\FilamentProovit\Support\ProovitProofTemplateCatalog;
 use Proovit\LaravelProovit\DTOs\ProofData;
 use Proovit\LaravelProovit\DTOs\ProofTemplateData;
@@ -111,7 +112,9 @@ final class ProovitProofView extends Page
                         return;
                     }
 
-                    app(ProovitClient::class)->proofs()->revoke($this->proofId);
+                    app(ProovitApiSessionGuard::class)->withAutoRefresh(
+                        fn (): mixed => app(ProovitClient::class)->proofs()->revoke($this->proofId),
+                    );
                     $this->loadProof();
 
                     Notification::make()
@@ -138,15 +141,18 @@ final class ProovitProofView extends Page
         }
 
         $client = app(ProovitClient::class);
-        $proof = $client->proofs()->show($this->proofId);
-        $history = $client->proofs()->history($this->proofId);
+        $guard = app(ProovitApiSessionGuard::class);
+        $proof = $guard->withAutoRefresh(fn (): ProofData => $client->proofs()->show($this->proofId));
+        $history = $guard->withAutoRefresh(fn (): array => $client->proofs()->history($this->proofId));
         $certificate = $proof->certificateUrl;
         $template = $this->templateFromProof($proof);
         $this->currentTemplate = $template;
 
         if (! filled($certificate) && ! in_array($proof->status, ['revoked', 'deleted'], true)) {
             try {
-                $certificate = $client->proofs()->getCertificateLink($this->proofId)->url;
+                $certificate = $guard->withAutoRefresh(
+                    fn (): ?string => $client->proofs()->getCertificateLink($this->proofId)->url,
+                );
             } catch (Throwable) {
                 $certificate = null;
             }

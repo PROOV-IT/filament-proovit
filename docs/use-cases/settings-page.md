@@ -11,6 +11,7 @@ The ProovIT Filament plugin ships with a dedicated configuration page.
 - select the company UUID that will be used for subsequent requests
 - persist the connection data in the encrypted settings store
 - open the public account creation page directly from the panel
+- show a live connection status block and bearer refresh shortcut
 
 ## What it edits
 
@@ -22,6 +23,7 @@ The ProovIT Filament plugin ships with a dedicated configuration page.
 - selected company display name
 - company list returned by the API
 - public account creation URL used by the action button
+- connection and bearer status badges shown at the top of the page
 
 ## Connection flow
 
@@ -33,6 +35,7 @@ It reads the current form state, then the plugin:
 3. fetches the available companies with the returned bearer token
 4. stores the endpoint, login, password, bearer token, and company list in the persistent settings store
 5. keeps the selected company as-is when it is still valid, otherwise waits for the user to choose a company
+6. refreshes the bearer later from saved credentials when the API starts rejecting the session
 
 ## Persistence rules
 
@@ -42,6 +45,7 @@ It reads the current form state, then the plugin:
 - `connection.workspace_token` is still written for backward compatibility
 - the saved settings are synchronized back into the page state after a successful test or save, without clearing the form
 - after a successful connection test, the page emits a refresh so the companies list updates immediately
+- if the bearer becomes invalid later, the page can refresh it from the saved login credentials without forcing a manual reconnect
 
 ## Recommended flow
 

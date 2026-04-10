@@ -321,11 +321,14 @@ return [
             'create_account' => 'Créer un compte',
             'save' => 'Enregistrer',
             'test_connection' => 'Tester la connexion',
+            'refresh_bearer' => 'Rafraîchir le bearer',
         ],
         'notifications' => [
             'authenticated_title' => 'Authentifié',
             'authenticated_body' => 'Le jeton bearer ProovIT et la liste des sociétés ont été rafraîchis.',
             'authenticate_failed_title' => 'Authentification échouée',
+            'bearer_refreshed_title' => 'Bearer rafraîchi',
+            'bearer_refreshed_body' => 'Le jeton bearer enregistré a été rafraîchi avec succès.',
             'saved_title' => 'Configuration enregistrée',
             'saved_body' => 'La configuration persistée a été mise à jour.',
             'save_failed_title' => 'Configuration non enregistrée',
@@ -338,6 +341,8 @@ return [
             'local' => 'Local',
         ],
         'sections' => [
+            'status' => 'État de la connexion',
+            'status_description' => 'Vue rapide de l’état actuel du bearer et du rattachement de société.',
             'connection' => 'Connexion',
             'connection_description' => 'Paramètres de compte et d’endpoint utilisés par le SDK et le panel.',
             'api' => 'API',
@@ -354,6 +359,9 @@ return [
             'docs_description' => 'Valeurs par défaut de publication de la documentation générée.',
         ],
         'fields' => [
+            'connection_status' => 'Connexion',
+            'bearer_status' => 'Bearer',
+            'company_status' => 'Rattachement société',
             'company_name' => 'Société',
             'login_email' => 'Email de connexion',
             'base_url' => 'URL de base API',
@@ -364,6 +372,15 @@ return [
         'helpers' => [
             'base_url' => 'Choisis l’endpoint API utilisé par le SDK. Le préfixe /api est déjà inclus.',
             'selected_company' => 'Teste d’abord la connexion pour charger la liste des sociétés disponibles.',
+        ],
+        'status' => [
+            'connected' => 'Connecté',
+            'disconnected' => 'Déconnecté',
+            'needs_bearer' => 'Bearer manquant',
+            'ready' => 'Prêt',
+            'refresh_unavailable' => 'Rafraîchissement indisponible',
+            'no_company' => 'Aucune société sélectionnée',
+            'unknown' => 'Inconnu',
         ],
         'base_urls' => [
             'production' => 'Production',

@@ -9,6 +9,7 @@ use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+use Proovit\FilamentProovit\Support\ProovitApiSessionGuard;
 use Proovit\LaravelProovit\DTOs\ProofData;
 use Proovit\LaravelProovit\ProovitClient;
 use RuntimeException;
@@ -82,7 +83,9 @@ final class ExportProofsAction
             $proofFolder = sprintf('proofs/%s', $proof->id);
 
             if (filled($proof->certificateUrl)) {
-                $certificate = app(ProovitClient::class)->proofs()->downloadCertificate($proof->id);
+                $certificate = app(ProovitApiSessionGuard::class)->withAutoRefresh(
+                    fn (): string => app(ProovitClient::class)->proofs()->downloadCertificate($proof->id),
+                );
                 if ($certificate !== '') {
                     $zip->addFromString(sprintf('%s/certificate.pdf', $proofFolder), $certificate);
                 }
@@ -111,6 +114,7 @@ final class ExportProofsAction
     private static function fetchProofs(Collection $records): array
     {
         $client = app(ProovitClient::class);
+        $guard = app(ProovitApiSessionGuard::class);
         $proofs = [];
 
         foreach ($records as $record) {
@@ -119,7 +123,7 @@ final class ExportProofsAction
                 continue;
             }
 
-            $proofs[] = $client->proofs()->show($proofId);
+            $proofs[] = $guard->withAutoRefresh(fn (): ProofData => $client->proofs()->show($proofId));
         }
 
         return $proofs;
@@ -232,6 +236,8 @@ final class ExportProofsAction
             throw new RuntimeException(__('filament-proovit::filament-proovit.proofs.export.errors.invalid_file_url', ['url' => $url]));
         }
 
-        return app(ProovitClient::class)->download($path.$query);
+        return app(ProovitApiSessionGuard::class)->withAutoRefresh(
+            fn (): string => app(ProovitClient::class)->download($path.$query),
+        );
     }
 }

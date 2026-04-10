@@ -78,11 +78,14 @@ return [
             'create_account' => 'Create account',
             'save' => 'Save settings',
             'test_connection' => 'Test connection',
+            'refresh_bearer' => 'Refresh bearer',
         ],
         'notifications' => [
             'authenticated_title' => 'Authenticated',
             'authenticated_body' => 'The ProovIT bearer token and company list have been refreshed.',
             'authenticate_failed_title' => 'Authentication failed',
+            'bearer_refreshed_title' => 'Bearer refreshed',
+            'bearer_refreshed_body' => 'The stored bearer token has been refreshed successfully.',
             'saved_title' => 'Settings saved',
             'saved_body' => 'The persisted configuration has been updated.',
             'save_failed_title' => 'Settings not saved',
@@ -95,6 +98,8 @@ return [
             'local' => 'Local',
         ],
         'sections' => [
+            'status' => 'Connection status',
+            'status_description' => 'Quick view of the current bearer token and company binding state.',
             'connection' => 'Connection',
             'connection_description' => 'Main account and endpoint settings used by the SDK and the panel.',
             'api' => 'API',
@@ -111,6 +116,9 @@ return [
             'docs_description' => 'Generated documentation publishing defaults.',
         ],
         'fields' => [
+            'connection_status' => 'Connection',
+            'bearer_status' => 'Bearer',
+            'company_status' => 'Company binding',
             'company_name' => 'Company',
             'login_email' => 'Login email',
             'base_url' => 'API base URL',
@@ -121,6 +129,15 @@ return [
         'helpers' => [
             'base_url' => 'Choose the API endpoint used by the SDK. The /api prefix is already included.',
             'selected_company' => 'Test the connection first to load the companies you can bind to.',
+        ],
+        'status' => [
+            'connected' => 'Connected',
+            'disconnected' => 'Disconnected',
+            'needs_bearer' => 'Bearer missing',
+            'ready' => 'Ready',
+            'refresh_unavailable' => 'Refresh unavailable',
+            'no_company' => 'No company selected',
+            'unknown' => 'Unknown',
         ],
         'base_urls' => [
             'production' => 'Production',

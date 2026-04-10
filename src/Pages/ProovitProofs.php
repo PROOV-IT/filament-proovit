@@ -14,6 +14,7 @@ use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Proovit\FilamentProovit\Support\Filament\Actions\Proofs\DepositProofAction;
 use Proovit\FilamentProovit\Support\Filament\Tables\Proofs\ProofsTable;
+use Proovit\FilamentProovit\Support\ProovitApiSessionGuard;
 use Proovit\LaravelProovit\ProovitClient;
 
 final class ProovitProofs extends Page implements HasTable
@@ -95,9 +96,11 @@ final class ProovitProofs extends Page implements HasTable
 
     protected function loadProofs(): array
     {
-        $proofs = app(ProovitClient::class)->proofs()->list([
-            'limit' => 25,
-        ]);
+        $proofs = app(ProovitApiSessionGuard::class)->withAutoRefresh(
+            fn (): array => app(ProovitClient::class)->proofs()->list([
+                'limit' => 25,
+            ]),
+        );
 
         $rows = array_values((array) ($proofs['data'] ?? $proofs['items'] ?? $proofs['proofs'] ?? []));
 
@@ -124,7 +127,9 @@ final class ProovitProofs extends Page implements HasTable
             return;
         }
 
-        app(ProovitClient::class)->proofs()->revoke($proofId);
+        app(ProovitApiSessionGuard::class)->withAutoRefresh(
+            fn (): mixed => app(ProovitClient::class)->proofs()->revoke($proofId),
+        );
         $this->resetTable();
     }
 }

@@ -72,6 +72,7 @@ final class ProovitSettings extends Page
             ProovitSettingsFormSchema::schema(
                 $this->companyOptions(),
                 $this->baseUrlOptions(),
+                $this->connectionStatusState(),
             ),
         );
     }
@@ -93,6 +94,7 @@ final class ProovitSettings extends Page
         return [
             $this->createAccountFormAction(),
             $this->testConnectionFormAction(),
+            $this->refreshBearerFormAction(),
             $this->getSaveFormAction(),
         ];
     }
@@ -115,6 +117,38 @@ final class ProovitSettings extends Page
             ->color('gray')
             ->action(function (): void {
                 $this->testConnection();
+            });
+    }
+
+    private function refreshBearerFormAction(): Action
+    {
+        return Action::make('refresh_bearer')
+            ->label(__('filament-proovit::filament-proovit.settings.actions.refresh_bearer'))
+            ->icon('heroicon-o-arrow-path')
+            ->color('gray')
+            ->visible(fn (): bool => $this->canRefreshBearer())
+            ->action(function (): void {
+                try {
+                    $connection = app(ProovitSettingsRepository::class)->all();
+                    $selectedCompanyUuid = (string) data_get($connection, 'connection.selected_company_uuid', '');
+                    $refreshed = app(ProovitClient::class)->connection()->refreshBearer($selectedCompanyUuid !== '' ? $selectedCompanyUuid : null);
+
+                    $this->data = $this->persistedPayloadFromConnection($this->payloadFromState(), $refreshed);
+                    $this->persistPayload($this->data);
+                    $this->data = $this->payloadFromState();
+
+                    Notification::make()
+                        ->title(__('filament-proovit::filament-proovit.settings.notifications.bearer_refreshed_title'))
+                        ->body(__('filament-proovit::filament-proovit.settings.notifications.bearer_refreshed_body'))
+                        ->success()
+                        ->send();
+                } catch (Throwable $exception) {
+                    Notification::make()
+                        ->title(__('filament-proovit::filament-proovit.settings.notifications.authenticate_failed_title'))
+                        ->body($exception->getMessage())
+                        ->danger()
+                        ->send();
+                }
             });
     }
 
@@ -238,6 +272,50 @@ final class ProovitSettings extends Page
         }
 
         return 'https://app.staging.proov-it.online';
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private function connectionStatusState(): array
+    {
+        $settings = app(ProovitSettingsRepository::class)->all();
+        $connection = (array) data_get($settings, 'connection', []);
+        $accessToken = trim((string) data_get($connection, 'access_token', ''));
+        $loginEmail = trim((string) data_get($connection, 'login_email', ''));
+        $selectedCompany = trim((string) data_get($connection, 'selected_company_uuid', data_get($connection, 'workspace_token', '')));
+        $companyName = trim((string) data_get($connection, 'company_name', ''));
+        $loginPassword = trim((string) data_get($connection, 'login_password', ''));
+
+        $connected = $accessToken !== '' && $loginEmail !== '';
+        $bearerLabel = $accessToken === ''
+            ? __('filament-proovit::filament-proovit.settings.status.needs_bearer')
+            : __('filament-proovit::filament-proovit.settings.status.ready');
+
+        if ($accessToken !== '' && $loginPassword === '') {
+            $bearerLabel = __('filament-proovit::filament-proovit.settings.status.refresh_unavailable');
+        }
+
+        return [
+            'status_label' => $connected
+                ? __('filament-proovit::filament-proovit.settings.status.connected')
+                : __('filament-proovit::filament-proovit.settings.status.disconnected'),
+            'status_color' => $connected ? 'success' : 'danger',
+            'bearer_label' => $bearerLabel,
+            'bearer_color' => $accessToken !== '' ? 'success' : 'warning',
+            'company_label' => $selectedCompany !== ''
+                ? ($companyName !== '' ? sprintf('%s (%s)', $companyName, $selectedCompany) : $selectedCompany)
+                : __('filament-proovit::filament-proovit.settings.status.no_company'),
+            'company_color' => $selectedCompany !== '' ? 'success' : 'warning',
+        ];
+    }
+
+    private function canRefreshBearer(): bool
+    {
+        $connection = (array) data_get(app(ProovitSettingsRepository::class)->all(), 'connection', []);
+
+        return trim((string) data_get($connection, 'login_email', '')) !== ''
+            && trim((string) data_get($connection, 'login_password', '')) !== '';
     }
 
     private function connectionConfigFromState(array $state): ProovitConfig

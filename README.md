@@ -39,6 +39,13 @@ composer require proovit/filament-proovit
 - [Release notes](docs/release-notes.md)
 - [V1 scope](docs/use-cases/v1-scope.md)
 
+## Release notes
+
+### 0.1.0
+
+- Initial ProovIT Filament plugin release
+- Native overview, settings, proofs, certificates, token reservations, and proof deposit support
+
 ## Acknowledgements
 
 - [Laravel](https://laravel.com)
